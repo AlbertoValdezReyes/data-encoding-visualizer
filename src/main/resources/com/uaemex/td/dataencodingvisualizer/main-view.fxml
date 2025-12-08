@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.uaemex.td.dataencodingvisualizer.controller.MainController"
+      spacing="10" style="-fx-background-color: #f0f0f0;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Título -->
+    <Label text="Data Encoding Visualizer - UAEMEX"
+           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <Separator/>
+
+    <!-- Panel de Control -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <VBox spacing="5">
+            <Label text="Categoría:" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="categoryComboBox" prefWidth="300"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Técnica de Codificación:" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="techniqueComboBox" prefWidth="350"/>
+        </VBox>
+    </HBox>
+
+    <!-- Input y Botón -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Datos de Entrada:" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="inputTextField"
+                       promptText="Ej: 10110010"
+                       prefWidth="400"
+                       style="-fx-font-size: 14px;"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="BOTTOM_LEFT">
+            <Label text=" "/> <!-- Spacer -->
+            <Button fx:id="generateButton"
+                    text="Generar Señal"
+                    prefWidth="150"
+                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"
+                    onMouseEntered="#onMouseEntered"
+                    onMouseExited="#onMouseExited"/>
+        </VBox>
+    </HBox>
+
+    <!-- Gráfico -->
+    <VBox VBox.vgrow="ALWAYS" spacing="5">
+        <Label text="Señal Generada:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        <LineChart fx:id="signalChart"
+                   prefHeight="350"
+                   legendVisible="true"
+                   style="-fx-background-color: white;">
+            <xAxis>
+                <NumberAxis label="Tiempo (segundos)" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Amplitud (V)" side="LEFT"/>
+            </yAxis>
+        </LineChart>
+    </VBox>
+
+    <!-- Descripción -->
+    <VBox spacing="5">
+        <Label text="Descripción de la Técnica:" style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="descriptionTextArea"
+                  prefHeight="80"
+                  wrapText="true"
+                  editable="false"
+                  style="-fx-font-size: 13px; -fx-background-color: #ecf0f1;"/>
+    </VBox>
+
+    <!-- Footer -->
+    <HBox alignment="CENTER" spacing="20" style="-fx-padding: 10 0 0 0;">
+        <Label text="Universidad Autónoma del Estado de México"
+               style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+        <Separator orientation="VERTICAL"/>
+        <Label text="Transmisión de Datos - 2025"
+               style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+    </HBox>
+
+</VBox>
