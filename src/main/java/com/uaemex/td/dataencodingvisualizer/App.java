@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * Clase principal de la aplicación Data Encoding Visualizer
+ * Clase principal de la aplicación - Data Encoding Visualizer
  */
 public class App extends Application {
 
@@ -24,8 +24,7 @@ public class App extends Application {
             stage.show();
 
         } catch (IOException e) {
-            System.err.println("Error fatal al cargar la vista FXML.");
-            System.err.println("Verifica que 'main-view.fxml' esté en la carpeta 'src/main/resources'.");
+            System.err.println("Error al cargar fxml");
             e.printStackTrace();
         }
     }

@@ -1,6 +1,7 @@
 package com.uaemex.td.dataencodingvisualizer.logic.analog_to_analog;
 
 import com.uaemex.td.dataencodingvisualizer.model.SignalData;
+import com.uaemex.td.dataencodingvisualizer.util.FunctionEvaluator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,13 +10,20 @@ import java.util.Map;
  * Phase Modulation (PM)
  * Modula la fase de una portadora con una señal mensaje
  * s(t) = A * sin(ωc*t + kp*m(t))
+ *
+ * La fase instantánea varía proporcionalmente con la señal mensaje.
+ * Soporta funciones personalizadas para la señal mensaje.
+ *
+ * @author UAEMEX - Transmisión de Datos
  */
 public class PMGenerator extends AnalogToAnalogGenerator {
     private double phaseDeviation;
 
     public PMGenerator() {
         super();
-        this.phaseDeviation = 2.0; // Desviación de fase (radianes)
+        this.carrierFrequency = 10.0;
+        this.messageFrequency = 1.0;
+        this.phaseDeviation = 2.0;
     }
 
     @Override
@@ -35,17 +43,30 @@ public class PMGenerator extends AnalogToAnalogGenerator {
         }
 
         double duration = 2.0;
+        String customFunction = null;
+
+        if (params != null && params.containsKey("customFunction")) {
+            customFunction = (String) params.get("customFunction");
+            System.out.println("Usando función personalizada para PM: " + customFunction);
+        }
 
         for (int i = 0; i < SAMPLES; i++) {
             double t = i * duration / SAMPLES;
 
-            // Señal mensaje (moduladora)
-            double message = Math.sin(getAngularFrequency(messageFrequency) * t);
+            double message;
+            if (customFunction != null && !customFunction.trim().isEmpty()) {
+                try {
+                    message = FunctionEvaluator.evaluate(customFunction, t);
+                } catch (Exception e) {
+                    System.err.println("Error evaluando función: " + e.getMessage());
+                    message = Math.sin(getAngularFrequency(messageFrequency) * t);
+                }
+            } else {
+                message = Math.sin(getAngularFrequency(messageFrequency) * t);
+            }
 
-            // PM: A * sin(ωc*t + kp*m(t))
             double carrierPhase = getAngularFrequency(carrierFrequency) * t;
             double modulatedPhase = phaseDeviation * message;
-
             double y = Math.sin(carrierPhase + modulatedPhase);
 
             data.add(new SignalData(t, y));
@@ -61,6 +82,7 @@ public class PMGenerator extends AnalogToAnalogGenerator {
 
     @Override
     public String getDescription() {
-        return "La fase de la portadora varía directamente con la amplitud de la señal mensaje";
+        return "La fase de la portadora varía directamente con la amplitud de la señal mensaje. " +
+                "Relacionado con FM. Puede ingresar función: sin(t), cos(2*pi*t), sin(t)+cos(t), etc.";
     }
 }

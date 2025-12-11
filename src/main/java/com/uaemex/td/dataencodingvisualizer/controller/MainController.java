@@ -24,9 +24,9 @@ import java.util.*;
  * - Manejo de eventos de los controles JavaFX
  * - Generación y visualización de señales codificadas
  * - Validación de entrada del usuario
+ * - Evaluación de funciones matemáticas para señales analógicas
  *
  * @author UAEMEX - Transmisión de Datos
- * @version 2.0
  */
 public class MainController {
 
@@ -61,19 +61,10 @@ public class MainController {
         System.out.println("=== INICIO DE INICIALIZACION ===");
 
         try {
-            // Paso 1: Verificar que todos los componentes FXML están inyectados
             verifyFXMLComponents();
-
-            // Paso 2: Inicializar los generadores
             initializeGenerators();
-
-            // Paso 3: Configurar ComboBox de categorías
             setupCategoryComboBox();
-
-            // Paso 4: Configurar manejadores de eventos
             setupEventHandlers();
-
-            // Paso 5: Configurar valores por defecto
             setDefaultValues();
 
             System.out.println("=== INICIALIZACION COMPLETADA EXITOSAMENTE ===");
@@ -88,8 +79,6 @@ public class MainController {
 
     /**
      * Verifica que todos los componentes FXML necesarios hayan sido inyectados correctamente.
-     * Si algún componente es null, significa que hay un problema en el archivo FXML
-     * o en la anotación @FXML.
      *
      * @throws IllegalStateException si algún componente crítico es null
      */
@@ -97,22 +86,22 @@ public class MainController {
         System.out.println("Verificando componentes FXML...");
 
         if (categoryComboBox == null) {
-            throw new IllegalStateException("categoryComboBox no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("categoryComboBox no fue inyectado");
         }
         if (techniqueComboBox == null) {
-            throw new IllegalStateException("techniqueComboBox no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("techniqueComboBox no fue inyectado");
         }
         if (inputTextField == null) {
-            throw new IllegalStateException("inputTextField no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("inputTextField no fue inyectado");
         }
         if (signalChart == null) {
-            throw new IllegalStateException("signalChart no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("signalChart no fue inyectado");
         }
         if (descriptionTextArea == null) {
-            throw new IllegalStateException("descriptionTextArea no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("descriptionTextArea no fue inyectado");
         }
         if (generateButton == null) {
-            throw new IllegalStateException("generateButton no fue inyectado. Verificar fx:id en FXML");
+            throw new IllegalStateException("generateButton no fue inyectado");
         }
 
         System.out.println("Todos los componentes FXML verificados correctamente.");
@@ -120,16 +109,13 @@ public class MainController {
 
     /**
      * Inicializa todos los generadores de señales organizados por categoría.
-     *
-     * Se utiliza LinkedHashMap para mantener el orden de inserción de las categorías.
-     * Cada categoría contiene una lista de generadores específicos.
      */
     private void initializeGenerators() {
         System.out.println("Inicializando generadores de señales...");
 
         generatorsByCategory = new LinkedHashMap<>();
 
-        // Categoría 1: Digital a Digital (Codificación de Línea) - 8 técnicas
+        // Categoría 1: Digital a Digital - 8 técnicas
         List<IGenerator> digitalToDigital = new ArrayList<>();
         digitalToDigital.add(new NRZ_L_Generator());
         digitalToDigital.add(new NRZ_I_Generator());
@@ -142,7 +128,7 @@ public class MainController {
         generatorsByCategory.put("Digital → Digital (Codificación de Línea)", digitalToDigital);
         System.out.println("  - Cargadas 8 técnicas Digital → Digital");
 
-        // Categoría 2: Digital a Analógico (Modulación) - 4 técnicas
+        // Categoría 2: Digital a Analógico - 4 técnicas
         List<IGenerator> digitalToAnalog = new ArrayList<>();
         digitalToAnalog.add(new ASKGenerator());
         digitalToAnalog.add(new FSKGenerator());
@@ -167,15 +153,10 @@ public class MainController {
         System.out.println("  - Cargadas 2 técnicas Analógico → Digital");
 
         System.out.println("Total de categorías: " + generatorsByCategory.size());
-        System.out.println("Total de técnicas: " +
-                generatorsByCategory.values().stream().mapToInt(List::size).sum());
     }
 
     /**
      * Configura el ComboBox de categorías con las opciones disponibles.
-     *
-     * Utiliza Platform.runLater para asegurar que la actualización de la UI
-     * se ejecute en el hilo de aplicación de JavaFX.
      */
     private void setupCategoryComboBox() {
         System.out.println("Configurando ComboBox de categorías...");
@@ -190,8 +171,6 @@ public class MainController {
                 categoryComboBox.getSelectionModel().selectFirst();
                 System.out.println("Categoría seleccionada por defecto: " + categories.get(0));
                 updateTechniqueComboBox();
-            } else {
-                System.err.println("ADVERTENCIA: No hay categorías para cargar");
             }
         });
 
@@ -200,28 +179,20 @@ public class MainController {
 
     /**
      * Configura todos los manejadores de eventos para los controles de la interfaz.
-     *
-     * Establece listeners para:
-     * - Cambio de selección en ComboBox de categorías
-     * - Cambio de selección en ComboBox de técnicas
-     * - Click en botón generar
      */
     private void setupEventHandlers() {
         System.out.println("Configurando manejadores de eventos...");
 
-        // Evento: Cambio de categoría actualiza las técnicas disponibles
         categoryComboBox.setOnAction(event -> {
             System.out.println("Evento: Cambio de categoría");
             updateTechniqueComboBox();
         });
 
-        // Evento: Cambio de técnica actualiza la descripción
         techniqueComboBox.setOnAction(event -> {
             System.out.println("Evento: Cambio de técnica");
             updateDescription();
         });
 
-        // Evento: Click en botón generar
         generateButton.setOnAction(event -> {
             System.out.println("Evento: Click en botón generar");
             handleGenerate();
@@ -241,15 +212,11 @@ public class MainController {
 
     /**
      * Actualiza el ComboBox de técnicas basándose en la categoría seleccionada.
-     *
-     * Este método se ejecuta cada vez que el usuario cambia la categoría.
-     * Limpia las técnicas anteriores y carga las nuevas correspondientes.
      */
     private void updateTechniqueComboBox() {
         String selectedCategory = categoryComboBox.getValue();
 
         if (selectedCategory == null || selectedCategory.isEmpty()) {
-            System.out.println("ADVERTENCIA: No hay categoría seleccionada");
             return;
         }
 
@@ -258,7 +225,6 @@ public class MainController {
         List<IGenerator> generators = generatorsByCategory.get(selectedCategory);
 
         if (generators == null || generators.isEmpty()) {
-            System.err.println("ERROR: No hay generadores para la categoría: " + selectedCategory);
             techniqueComboBox.setItems(FXCollections.observableArrayList());
             return;
         }
@@ -285,21 +251,16 @@ public class MainController {
 
     /**
      * Actualiza la descripción mostrada y establece el generador actual.
-     *
-     * Busca el generador correspondiente a la técnica seleccionada y actualiza
-     * el TextArea de descripción con la información de dicha técnica.
      */
     private void updateDescription() {
         String selectedTechnique = techniqueComboBox.getValue();
 
         if (selectedTechnique == null || selectedTechnique.isEmpty()) {
-            System.out.println("ADVERTENCIA: No hay técnica seleccionada");
             return;
         }
 
         System.out.println("Actualizando descripción para: " + selectedTechnique);
 
-        // Buscar el generador correspondiente
         boolean generatorFound = false;
 
         for (Map.Entry<String, List<IGenerator>> entry : generatorsByCategory.entrySet()) {
@@ -309,7 +270,6 @@ public class MainController {
                     descriptionTextArea.setText(generator.getDescription());
                     generatorFound = true;
 
-                    // Actualizar placeholder según el tipo de entrada requerida
                     String category = categoryComboBox.getValue();
                     updateInputFieldPlaceholder(category);
 
@@ -332,7 +292,7 @@ public class MainController {
     private void updateInputFieldPlaceholder(String category) {
         if (category.contains("Analógico → Analógico") ||
                 category.contains("Analógico → Digital")) {
-            inputTextField.setPromptText("No requiere entrada (señal automática)");
+            inputTextField.setPromptText("Función: sin(2*pi*t), cos(t), sin(t)+cos(2*t), etc.");
             inputTextField.clear();
         } else {
             inputTextField.setPromptText("Ej: 10110010");
@@ -344,9 +304,6 @@ public class MainController {
 
     /**
      * Maneja el evento de generación de señal.
-     *
-     * Valida la entrada del usuario, genera la señal utilizando el generador
-     * seleccionado y la muestra en el gráfico.
      */
     @FXML
     private void handleGenerate() {
@@ -379,15 +336,18 @@ public class MainController {
 
             if (input.length() < 4) {
                 System.out.println("ADVERTENCIA: Entrada corta (menos de 4 bits)");
-                showAlert("Advertencia",
-                        "Se recomienda al menos 4 bits para una mejor visualización",
-                        Alert.AlertType.WARNING);
             }
         }
 
         try {
-            // Generar señal con el generador actual
             Map<String, Object> params = new HashMap<>();
+
+            // Si es técnica analógica y hay función, parsearla
+            if (requiresAnalogInput(category) && !input.isEmpty()) {
+                System.out.println("Parseando función matemática: " + input);
+                params.put("customFunction", input);
+            }
+
             List<SignalData> signalData = currentGenerator.generate(input, params);
 
             if (signalData == null || signalData.isEmpty()) {
@@ -407,7 +367,8 @@ public class MainController {
             System.err.println("EXCEPCION durante la generación:");
             e.printStackTrace();
             showAlert("Error de Generación",
-                    "Ocurrió un error al generar la señal:\n" + e.getMessage(),
+                    "Ocurrió un error al generar la señal:\n" + e.getMessage() +
+                            "\n\nPara funciones, use: sin(t), cos(t), sin(2*pi*t), etc.",
                     Alert.AlertType.ERROR);
         }
     }
@@ -416,7 +377,7 @@ public class MainController {
      * Verifica si la categoría requiere entrada digital (binaria).
      *
      * @param category La categoría a verificar
-     * @return true si requiere entrada digital, false en caso contrario
+     * @return true si requiere entrada digital
      */
     private boolean requiresDigitalInput(String category) {
         return category.contains("Digital → Digital") ||
@@ -424,10 +385,21 @@ public class MainController {
     }
 
     /**
+     * Verifica si la categoría requiere entrada analógica (función).
+     *
+     * @param category La categoría a verificar
+     * @return true si requiere entrada analógica
+     */
+    private boolean requiresAnalogInput(String category) {
+        return category.contains("Analógico → Analógico") ||
+                category.contains("Analógico → Digital");
+    }
+
+    /**
      * Valida que la entrada sea una cadena binaria válida.
      *
      * @param input La cadena a validar
-     * @return true si es válida (solo contiene 0s y 1s), false en caso contrario
+     * @return true si es válida
      */
     private boolean isValidDigitalInput(String input) {
         return input != null && !input.isEmpty() && input.matches("[01]+");
@@ -435,8 +407,6 @@ public class MainController {
 
     /**
      * Grafica la señal generada en el LineChart.
-     *
-     * Limpia el gráfico anterior y dibuja la nueva señal con los datos proporcionados.
      *
      * @param data Lista de puntos SignalData a graficar
      */
@@ -462,10 +432,6 @@ public class MainController {
 
     /**
      * Muestra un cuadro de diálogo de alerta al usuario.
-     *
-     * @param title Título del diálogo
-     * @param content Contenido del mensaje
-     * @param type Tipo de alerta (ERROR, WARNING, INFORMATION)
      */
     private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
@@ -476,10 +442,7 @@ public class MainController {
     }
 
     /**
-     * Muestra un error crítico que impide el funcionamiento de la aplicación.
-     *
-     * @param title Título del error
-     * @param content Descripción del error
+     * Muestra un error crítico.
      */
     private void showCriticalError(String title, String content) {
         Platform.runLater(() -> {
@@ -491,10 +454,6 @@ public class MainController {
         });
     }
 
-    /**
-     * Manejador de evento para efecto hover del botón generar.
-     * Se ejecuta cuando el mouse entra al área del botón.
-     */
     @FXML
     private void onMouseEntered() {
         generateButton.setStyle(
@@ -506,10 +465,6 @@ public class MainController {
         );
     }
 
-    /**
-     * Manejador de evento para efecto hover del botón generar.
-     * Se ejecuta cuando el mouse sale del área del botón.
-     */
     @FXML
     private void onMouseExited() {
         generateButton.setStyle(
