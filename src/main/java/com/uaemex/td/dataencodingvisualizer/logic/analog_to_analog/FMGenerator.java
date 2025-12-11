@@ -43,7 +43,7 @@ public class FMGenerator extends AnalogToAnalogGenerator {
             }
         }
 
-        double duration = 2.0;
+        double duration = 4.0;
         double phase = 0.0;
         String customFunction = null;
 

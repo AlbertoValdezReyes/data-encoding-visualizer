@@ -75,7 +75,7 @@ public class AMGenerator extends AnalogToAnalogGenerator {
             System.err.println("ADVERTENCIA: Sobremodulación (na > 1), puede causar distorsión");
         }
 
-        double duration = 2.0;
+        double duration = 4.0;
         String customFunction = null;
 
         // Verificar si hay función personalizada

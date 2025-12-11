@@ -35,7 +35,7 @@ public class DMGenerator extends AnalogToDigitalGenerator {
             }
         }
 
-        double duration = 2.0;
+        double duration = 4.0;
         double sampleInterval = duration / samplingRate;
         double approximation = 0.0;
         String customFunction = null;

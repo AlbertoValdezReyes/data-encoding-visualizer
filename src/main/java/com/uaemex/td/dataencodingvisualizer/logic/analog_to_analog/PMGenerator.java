@@ -42,7 +42,7 @@ public class PMGenerator extends AnalogToAnalogGenerator {
             }
         }
 
-        double duration = 2.0;
+        double duration = 4.0;
         String customFunction = null;
 
         if (params != null && params.containsKey("customFunction")) {

@@ -41,7 +41,7 @@ public class PCMGenerator extends AnalogToDigitalGenerator {
             }
         }
 
-        double duration = 2.0;
+        double duration = 4.0;
         int totalSamples = 200;
         String customFunction = null;
 
