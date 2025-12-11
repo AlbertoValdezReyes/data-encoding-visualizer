@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.util.*;
 
@@ -36,6 +37,9 @@ public class MainController {
     @FXML private LineChart<Number, Number> signalChart;
     @FXML private TextArea descriptionTextArea;
     @FXML private Button generateButton;
+
+    // Componentes del panel de armónicos
+    @FXML private VBox harmonicsPanel;
 
     /**
      * Mapa que almacena los generadores organizados por categoría.
@@ -66,6 +70,7 @@ public class MainController {
             setupCategoryComboBox();
             setupEventHandlers();
             setDefaultValues();
+            initializeHarmonicsPanel();
 
             System.out.println("=== INICIALIZACION COMPLETADA EXITOSAMENTE ===");
 
@@ -290,15 +295,50 @@ public class MainController {
      * @param category La categoría actualmente seleccionada
      */
     private void updateInputFieldPlaceholder(String category) {
-        if (category.contains("Analógico → Analógico") ||
-                category.contains("Analógico → Digital")) {
-            inputTextField.setPromptText("Función: sin(2*pi*t), cos(t), sin(t)+cos(2*t), etc.");
+        boolean isAnalog = category.contains("Analógico → Analógico") ||
+                category.contains("Analógico → Digital");
+
+        if (isAnalog) {
+            inputTextField.setPromptText("Función: sin(t), cos(t), sin(t)+cos(2*t), etc.");
             inputTextField.clear();
+            showHarmonicsPanel(true);
+            removeDigitalFilter();
         } else {
             inputTextField.setPromptText("Ej: 10110010");
-            if (inputTextField.getText().isEmpty()) {
-                inputTextField.setText("10110010");
+            inputTextField.clear();
+            inputTextField.setText("10110010");
+            showHarmonicsPanel(false);
+            applyDigitalFilter();
+        }
+    }
+
+    /**
+     * Aplica un filtro para que solo se admitan 0s y 1s en el campo de entrada.
+     */
+    private void applyDigitalFilter() {
+        inputTextField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("[01]*")) {
+                return change;
             }
+            return null;
+        }));
+    }
+
+    /**
+     * Remueve el filtro de entrada digital para permitir funciones matemáticas.
+     */
+    private void removeDigitalFilter() {
+        inputTextField.setTextFormatter(null);
+    }
+
+    /**
+     * Muestra u oculta el panel de armónicos.
+     */
+    private void showHarmonicsPanel(boolean show) {
+        if (harmonicsPanel != null) {
+            harmonicsPanel.setVisible(show);
+            harmonicsPanel.setManaged(show);
         }
     }
 
@@ -473,5 +513,37 @@ public class MainController {
                         "-fx-font-size: 14px; " +
                         "-fx-font-weight: bold;"
         );
+    }
+
+    // ==================== MÉTODOS DEL PANEL DE ARMÓNICOS ====================
+
+    private void initializeHarmonicsPanel() {
+        // Panel simplificado, no requiere inicialización especial
+    }
+
+    private void appendToInput(String text) {
+        String current = inputTextField.getText();
+        inputTextField.setText(current + text);
+        inputTextField.requestFocus();
+        inputTextField.positionCaret(inputTextField.getText().length());
+    }
+
+    @FXML private void addSin() { appendToInput("sin(t)"); }
+    @FXML private void addCos() { appendToInput("cos(t)"); }
+    @FXML private void addSin2() { appendToInput("sin(2*t)"); }
+    @FXML private void addCos2() { appendToInput("cos(2*t)"); }
+    @FXML private void addSin3() { appendToInput("sin(3*t)"); }
+    @FXML private void addCos3() { appendToInput("cos(3*t)"); }
+    @FXML private void addPlus() { appendToInput("+"); }
+    @FXML private void addMinus() { appendToInput("-"); }
+    @FXML private void addMultiply() { appendToInput("*"); }
+    @FXML private void addDivide() { appendToInput("/"); }
+    @FXML private void addOpenParen() { appendToInput("("); }
+    @FXML private void addCloseParen() { appendToInput(")"); }
+    @FXML private void addPi() { appendToInput("pi"); }
+
+    @FXML
+    private void clearFunction() {
+        inputTextField.clear();
     }
 }
