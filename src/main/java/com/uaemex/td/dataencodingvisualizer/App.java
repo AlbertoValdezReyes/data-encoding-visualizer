@@ -18,7 +18,7 @@ public class App extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main-view.fxml"));
             Parent root = fxmlLoader.load();
 
-            Scene scene = new Scene(root, 1000, 700);
+            Scene scene = new Scene(root, 1500, 1200);
             stage.setTitle("Data Encoding Visualizer - UAEMEX");
             stage.setScene(scene);
             stage.show();

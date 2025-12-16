@@ -58,34 +58,42 @@
     </HBox>
 
     <!-- Panel de Armónicos (solo visible para categorías analógicas) -->
-    <VBox fx:id="harmonicsPanel" spacing="10" visible="false" managed="false"
-          style="-fx-background-color: #e8f4fc; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #3498db; -fx-border-radius: 8;">
+    <VBox fx:id="harmonicsPanel" spacing="0" visible="false" managed="false"
+          style="-fx-background-color: #e8f4fc; -fx-background-radius: 8; -fx-border-color: #3498db; -fx-border-radius: 8;">
 
-        <Label text="Constructor de Armónicos" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
-
-        <!-- Botones de armónicos -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Armónicos:" style="-fx-font-weight: bold;"/>
-            <Button text="sin(t)" onAction="#addSin" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-            <Button text="cos(t)" onAction="#addCos" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-            <Button text="sin(2t)" onAction="#addSin2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-            <Button text="cos(2t)" onAction="#addCos2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-            <Button text="sin(3t)" onAction="#addSin3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-            <Button text="cos(3t)" onAction="#addCos3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+        <!-- Header clickeable para toggle -->
+        <HBox spacing="10" alignment="CENTER_LEFT" onMouseClicked="#toggleHarmonicsContent"
+              style="-fx-padding: 10 15 10 15; -fx-cursor: hand;">
+            <Label fx:id="harmonicsToggleIcon" text="▼" style="-fx-font-size: 12px; -fx-text-fill: #3498db;"/>
+            <Label text="Constructor de Armónicos" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
         </HBox>
 
-        <!-- Operadores y coeficientes -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Operadores:" style="-fx-font-weight: bold;"/>
-            <Button text="+" onAction="#addPlus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button text="-" onAction="#addMinus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button text="*" onAction="#addMultiply" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button text="/" onAction="#addDivide" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Button text="(" onAction="#addOpenParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-            <Button text=")" onAction="#addCloseParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-            <Button text="pi" onAction="#addPi" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-            <Button text="Limpiar" onAction="#clearFunction" style="-fx-background-color: #c0392b; -fx-text-fill: white;"/>
-        </HBox>
+        <!-- Contenido colapsable -->
+        <VBox fx:id="harmonicsContent" spacing="10" style="-fx-padding: 0 15 15 15;">
+            <!-- Botones de armónicos -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Armónicos:" style="-fx-font-weight: bold;"/>
+                <Button text="sin(t)" onAction="#addSin" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button text="cos(t)" onAction="#addCos" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button text="sin(2t)" onAction="#addSin2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button text="cos(2t)" onAction="#addCos2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button text="sin(3t)" onAction="#addSin3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                <Button text="cos(3t)" onAction="#addCos3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+            </HBox>
+
+            <!-- Operadores y coeficientes -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Operadores:" style="-fx-font-weight: bold;"/>
+                <Button text="+" onAction="#addPlus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="-" onAction="#addMinus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="*" onAction="#addMultiply" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="/" onAction="#addDivide" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="(" onAction="#addOpenParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
+                <Button text=")" onAction="#addCloseParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
+                <Button text="pi" onAction="#addPi" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
+                <Button text="Limpiar" onAction="#clearFunction" style="-fx-background-color: #c0392b; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
     </VBox>
 
     <!-- Gráfico -->

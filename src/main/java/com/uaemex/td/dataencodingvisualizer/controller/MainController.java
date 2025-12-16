@@ -40,6 +40,8 @@ public class MainController {
 
     // Componentes del panel de armónicos
     @FXML private VBox harmonicsPanel;
+    @FXML private VBox harmonicsContent;
+    @FXML private Label harmonicsToggleIcon;
 
     /**
      * Mapa que almacena los generadores organizados por categoría.
@@ -379,6 +381,17 @@ public class MainController {
             }
         }
 
+        // Validación de sintaxis para funciones analógicas
+        if (requiresAnalogInput(category)) {
+            String syntaxError = validateFunctionSyntax(input);
+            if (syntaxError != null) {
+                System.err.println("ERROR de sintaxis: " + syntaxError);
+                showAlert("Error de Sintaxis", syntaxError, Alert.AlertType.WARNING);
+                highlightError();
+                return;
+            }
+        }
+
         try {
             Map<String, Object> params = new HashMap<>();
 
@@ -521,6 +534,112 @@ public class MainController {
         // Panel simplificado, no requiere inicialización especial
     }
 
+    /**
+     * Verifica si un carácter es un operador matemático.
+     */
+    private boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+
+    /**
+     * Valida la sintaxis de la función matemática.
+     * @return mensaje de error o null si es válida
+     */
+    private String validateFunctionSyntax(String function) {
+        if (function == null || function.trim().isEmpty()) {
+            return "La función no puede estar vacía";
+        }
+
+        String trimmed = function.trim();
+
+        // Verificar paréntesis balanceados
+        int parenthesesCount = 0;
+        for (char c : trimmed.toCharArray()) {
+            if (c == '(') parenthesesCount++;
+            else if (c == ')') parenthesesCount--;
+            if (parenthesesCount < 0) {
+                return "Paréntesis de cierre sin abrir";
+            }
+        }
+        if (parenthesesCount > 0) {
+            return "Faltan " + parenthesesCount + " paréntesis de cierre";
+        }
+
+        // Verificar que no termine con operador
+        char lastChar = trimmed.charAt(trimmed.length() - 1);
+        if (isOperator(lastChar)) {
+            return "La función no puede terminar con un operador";
+        }
+
+        // Verificar operadores consecutivos inválidos
+        for (int i = 0; i < trimmed.length() - 1; i++) {
+            char current = trimmed.charAt(i);
+            char next = trimmed.charAt(i + 1);
+            if (isOperator(current) && isOperator(next)) {
+                // Permitir *- o /- para números negativos
+                if (!((current == '*' || current == '/') && (next == '-'))) {
+                    return "Operadores consecutivos inválidos: " + current + next;
+                }
+            }
+        }
+
+        // Verificar paréntesis vacíos
+        if (trimmed.contains("()")) {
+            return "Paréntesis vacíos no permitidos";
+        }
+
+        // Verificar funciones válidas (sin, cos, tan, etc.)
+        String[] validFunctions = {"sin", "cos", "tan", "pi", "exp", "log", "sqrt"};
+        String temp = trimmed.toLowerCase();
+
+        // Buscar palabras que no sean funciones válidas ni 't'
+        StringBuilder word = new StringBuilder();
+        for (int i = 0; i < temp.length(); i++) {
+            char c = temp.charAt(i);
+            if (Character.isLetter(c)) {
+                word.append(c);
+            } else {
+                if (!word.isEmpty()) {
+                    String w = word.toString();
+                    if (!w.equals("t") && !Arrays.asList(validFunctions).contains(w)) {
+                        return "Función o variable desconocida: " + w;
+                    }
+                    word = new StringBuilder();
+                }
+            }
+        }
+        // Verificar última palabra
+        if (!word.isEmpty()) {
+            String w = word.toString();
+            if (!w.equals("t") && !Arrays.asList(validFunctions).contains(w)) {
+                return "Función o variable desconocida: " + w;
+            }
+        }
+
+        return null; // Válida
+    }
+
+    /**
+     * Resalta el campo de entrada para indicar error.
+     */
+    private void highlightError() {
+        String originalStyle = inputTextField.getStyle();
+        inputTextField.setStyle(originalStyle + "-fx-border-color: #e74c3c; -fx-border-width: 2;");
+
+        // Restaurar estilo después de 2 segundos
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                Platform.runLater(() -> inputTextField.setStyle(originalStyle));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    /**
+     * Añade texto al final del campo de entrada.
+     */
     private void appendToInput(String text) {
         String current = inputTextField.getText();
         inputTextField.setText(current + text);
@@ -545,5 +664,23 @@ public class MainController {
     @FXML
     private void clearFunction() {
         inputTextField.clear();
+        inputTextField.requestFocus();
+    }
+
+    /**
+     * Alterna la visibilidad del contenido del panel de armónicos.
+     */
+    @FXML
+    private void toggleHarmonicsContent() {
+        if (harmonicsContent != null) {
+            boolean isVisible = harmonicsContent.isVisible();
+            harmonicsContent.setVisible(!isVisible);
+            harmonicsContent.setManaged(!isVisible);
+
+            // Actualizar el icono de toggle
+            if (harmonicsToggleIcon != null) {
+                harmonicsToggleIcon.setText(isVisible ? "▶" : "▼");
+            }
+        }
     }
 }
