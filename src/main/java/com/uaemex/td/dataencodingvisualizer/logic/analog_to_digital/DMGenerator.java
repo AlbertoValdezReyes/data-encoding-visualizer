@@ -7,19 +7,51 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Delta Modulation (DM)
- * Codifica la diferencia entre muestras consecutivas
- * Output: 1 si la señal sube, 0 si baja
- * Reconstrucción: escalera que sigue la señal original
+ * Delta Modulation (DM) - Según Stallings
  *
- * Soporta funciones personalizadas para la señal analógica de entrada.
+ * Delta Modulation es una forma simplificada de PCM que transmite solo 1 bit
+ * por muestra, indicando si la señal subió o bajó respecto a la aproximación anterior.
+ *
+ * PRINCIPIO DE FUNCIONAMIENTO:
+ * - La señal de entrada se compara con una aproximación escalonada
+ * - Si la señal real > aproximación: se transmite "1" y la aproximación sube δ (delta)
+ * - Si la señal real < aproximación: se transmite "0" y la aproximación baja δ (delta)
+ *
+ * VENTAJAS:
+ * - Implementación simple (solo 1 bit por muestra)
+ * - No requiere codificación compleja
+ * - Bajo costo de hardware
+ *
+ * PROBLEMAS (según Stallings):
+ *
+ * 1. SLOPE OVERLOAD (Sobrecarga de pendiente):
+ *    - Ocurre cuando la señal cambia más rápido que δ*fs
+ *    - La aproximación no puede seguir cambios rápidos de la señal
+ *    - Solución: aumentar δ o fs
+ *    - Condición: |dm(t)/dt| <= δ*fs
+ *
+ * 2. GRANULAR NOISE (Ruido granular):
+ *    - Ocurre cuando la señal cambia lentamente o es constante
+ *    - La aproximación oscila alrededor del valor real
+ *    - Solución: reducir δ
+ *
+ * COMPROMISO: δ grande reduce slope overload pero aumenta ruido granular
+ *             δ pequeño reduce ruido granular pero aumenta slope overload
+ *
+ * SOLUCIÓN: Adaptive Delta Modulation (ADM) - ajusta δ dinámicamente
+ *
+ * Referencia: Stallings, W. "Comunicaciones y Redes de Computadores"
+ *
+ * @author UAEMEX - Transmisión de Datos
  */
 public class DMGenerator extends AnalogToDigitalGenerator {
-    private double stepSize;
+
+    private double delta;  // Tamaño del paso δ
 
     public DMGenerator() {
         super();
-        this.stepSize = 0.1;
+        this.samplingRate = 32;  // Alta tasa de muestreo necesaria para DM
+        this.delta = 0.15;       // Tamaño del paso delta
     }
 
     @Override
@@ -30,53 +62,110 @@ public class DMGenerator extends AnalogToDigitalGenerator {
             if (params.containsKey("samplingRate")) {
                 samplingRate = (Integer) params.get("samplingRate");
             }
-            if (params.containsKey("stepSize")) {
-                stepSize = (Double) params.get("stepSize");
+            if (params.containsKey("delta")) {
+                delta = (Double) params.get("delta");
             }
         }
 
-        double duration = 4.0;
+        double duration = 2.0;  // Duración en segundos
         double sampleInterval = duration / samplingRate;
-        double approximation = 0.0;
         String customFunction = null;
 
         if (params != null && params.containsKey("customFunction")) {
             customFunction = (String) params.get("customFunction");
-            System.out.println("Usando función personalizada para DM: " + customFunction);
         }
+
+        // Aproximación inicial (empieza en el centro del rango)
+        double approximation = 0.0;
+
+        // Para almacenar los bits transmitidos
+        StringBuilder bitStream = new StringBuilder();
+
+        // Variables para detectar slope overload y granular noise
+        int slopeOverloadCount = 0;
+        int granularNoiseCount = 0;
+        int consecutiveSameBits = 0;
+        int lastBit = -1;
 
         for (int i = 0; i < samplingRate; i++) {
             double t = i * sampleInterval;
-            double actualValue;
+            double tNext = (i + 1) * sampleInterval;
 
-            if (customFunction != null && !customFunction.trim().isEmpty()) {
-                try {
-                    actualValue = FunctionEvaluator.evaluate(customFunction, t);
-                } catch (Exception e) {
-                    System.err.println("Error evaluando función: " + e.getMessage());
-                    actualValue = generateTestSignal(t);
+            // Obtener valor real de la señal
+            double actualValue = evaluateSignal(customFunction, t);
+
+            // Comparar con la aproximación y decidir el bit
+            int bit;
+            if (actualValue >= approximation) {
+                bit = 1;
+                approximation += delta;  // Subir la aproximación
+            } else {
+                bit = 0;
+                approximation -= delta;  // Bajar la aproximación
+            }
+
+            bitStream.append(bit);
+
+            // Detectar slope overload (muchos bits iguales consecutivos)
+            if (bit == lastBit) {
+                consecutiveSameBits++;
+                if (consecutiveSameBits >= 3) {
+                    slopeOverloadCount++;
                 }
             } else {
-                actualValue = generateTestSignal(t);
+                // Detectar ruido granular (alternancia rápida 1-0-1-0)
+                if (consecutiveSameBits == 0 && lastBit != -1) {
+                    granularNoiseCount++;
+                }
+                consecutiveSameBits = 0;
+            }
+            lastBit = bit;
+
+            // Dibujar la señal escalonada (aproximación)
+            // Línea horizontal en el nivel actual
+            data.add(new SignalData(t, approximation - (bit == 1 ? delta : -delta)));
+
+            // Transición vertical
+            if (i > 0) {
+                data.add(new SignalData(t, approximation));
             }
 
-            if (actualValue > approximation) {
-                approximation += stepSize;
-            } else {
-                approximation -= stepSize;
-            }
+            // Mantener el nivel hasta la siguiente muestra
+            data.add(new SignalData(tNext - 0.001, approximation));
+        }
 
-            approximation = Math.max(-1.0, Math.min(1.0, approximation));
+        // Imprimir información de la modulación
+        System.out.println("=== Delta Modulation (DM) ===");
+        System.out.println("Tasa de muestreo: " + samplingRate + " muestras/s");
+        System.out.println("Delta (δ): " + delta);
+        System.out.println("Bits transmitidos: " + bitStream.toString().substring(0, Math.min(32, bitStream.length())) +
+                          (bitStream.length() > 32 ? "..." : ""));
+        System.out.println("Total bits: " + bitStream.length());
 
-            double nextT = (i + 1) * sampleInterval;
-            int segments = 10;
-            for (int j = 0; j < segments; j++) {
-                double x = t + j * (nextT - t) / segments;
-                data.add(new SignalData(x, approximation));
-            }
+        if (slopeOverloadCount > samplingRate / 8) {
+            System.out.println("⚠ ADVERTENCIA: Posible SLOPE OVERLOAD detectado");
+            System.out.println("  Solución: Aumentar δ o la tasa de muestreo");
+        }
+        if (granularNoiseCount > samplingRate / 4) {
+            System.out.println("⚠ ADVERTENCIA: Posible RUIDO GRANULAR detectado");
+            System.out.println("  Solución: Reducir δ");
         }
 
         return data;
+    }
+
+    /**
+     * Evalúa la señal en el tiempo t
+     */
+    private double evaluateSignal(String customFunction, double t) {
+        if (customFunction != null && !customFunction.trim().isEmpty()) {
+            try {
+                return FunctionEvaluator.evaluate(customFunction, t);
+            } catch (Exception e) {
+                return generateTestSignal(t);
+            }
+        }
+        return generateTestSignal(t);
     }
 
     @Override
@@ -86,7 +175,11 @@ public class DMGenerator extends AnalogToDigitalGenerator {
 
     @Override
     public String getDescription() {
-        return "Aproxima la señal con escalones: sube (+Δ) o baja (-Δ) en cada muestra. " +
-                "Puede ingresar una función personalizada como: sin(2*pi*t), cos(t), etc.";
+        return "DM (Stallings): Transmite 1 bit por muestra.\n" +
+               "• Bit 1: señal > aproximación → aproximación sube δ\n" +
+               "• Bit 0: señal < aproximación → aproximación baja δ\n" +
+               "Problemas: Slope Overload (señal cambia muy rápido) y\n" +
+               "Ruido Granular (señal casi constante → oscilación).\n" +
+               "δ actual: " + delta + ", Muestras: " + samplingRate;
     }
 }

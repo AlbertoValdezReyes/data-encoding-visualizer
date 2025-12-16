@@ -104,10 +104,10 @@
                    legendVisible="true"
                    style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-width: 1;">
             <xAxis>
-                <NumberAxis label="Tiempo (segundos)" side="BOTTOM" autoRanging="true"/>
+                <NumberAxis fx:id="xAxis" label="Tiempo (segundos)" side="BOTTOM" autoRanging="true"/>
             </xAxis>
             <yAxis>
-                <NumberAxis label="Amplitud (V)" side="LEFT" autoRanging="true"/>
+                <NumberAxis fx:id="yAxis" label="Amplitud (V)" side="LEFT" autoRanging="true"/>
             </yAxis>
         </LineChart>
     </VBox>

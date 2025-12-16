@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -35,6 +36,8 @@ public class MainController {
     @FXML private ComboBox<String> techniqueComboBox;
     @FXML private TextField inputTextField;
     @FXML private LineChart<Number, Number> signalChart;
+    @FXML private NumberAxis xAxis;
+    @FXML private NumberAxis yAxis;
     @FXML private TextArea descriptionTextArea;
     @FXML private Button generateButton;
 
@@ -471,8 +474,16 @@ public class MainController {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(currentGenerator.getName());
 
+        // Calcular min y max de los datos
+        double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
+
         for (SignalData point : data) {
             series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
+            minX = Math.min(minX, point.getX());
+            maxX = Math.max(maxX, point.getX());
+            minY = Math.min(minY, point.getY());
+            maxY = Math.max(maxY, point.getY());
         }
 
         signalChart.getData().add(series);
@@ -480,7 +491,70 @@ public class MainController {
         signalChart.setLegendVisible(true);
         signalChart.setAnimated(false);
 
+        // Configurar escala de ejes según el tipo de técnica
+        configureAxesScale(minX, maxX, minY, maxY);
+
         System.out.println("Gráfico actualizado correctamente");
+    }
+
+    /**
+     * Configura la escala de los ejes según el tipo de técnica.
+     */
+    private void configureAxesScale(double minX, double maxX, double minY, double maxY) {
+        if (xAxis == null || yAxis == null) {
+            return;
+        }
+
+        String techniqueName = currentGenerator.getName();
+        String category = categoryComboBox.getValue();
+
+        // Para PCM y DM, configurar escala específica
+        if (techniqueName.contains("PCM") || techniqueName.contains("DM")) {
+            // Desactivar auto-ranging para control manual
+            xAxis.setAutoRanging(false);
+            yAxis.setAutoRanging(false);
+
+            // Configurar eje X (tiempo)
+            xAxis.setLowerBound(0);
+            xAxis.setUpperBound(maxX + 0.1);
+            xAxis.setTickUnit(0.25);
+
+            // Configurar eje Y (amplitud) con margen
+            double yRange = maxY - minY;
+            double yMargin = yRange * 0.15;  // 15% de margen
+            yAxis.setLowerBound(minY - yMargin);
+            yAxis.setUpperBound(maxY + yMargin);
+
+            // Calcular tick unit apropiado
+            double tickUnit = yRange / 8;
+            if (tickUnit < 0.1) tickUnit = 0.1;
+            else if (tickUnit < 0.25) tickUnit = 0.25;
+            else if (tickUnit < 0.5) tickUnit = 0.5;
+            else tickUnit = Math.ceil(tickUnit * 2) / 2;  // Redondear a 0.5
+            yAxis.setTickUnit(tickUnit);
+
+            System.out.println("Escala PCM/DM: Y=[" + (minY - yMargin) + ", " + (maxY + yMargin) + "], tick=" + tickUnit);
+
+        } else if (category.contains("Analógico → Analógico")) {
+            // Para modulaciones analógicas
+            xAxis.setAutoRanging(false);
+            yAxis.setAutoRanging(false);
+
+            xAxis.setLowerBound(0);
+            xAxis.setUpperBound(maxX);
+            xAxis.setTickUnit(maxX / 10);
+
+            double yRange = maxY - minY;
+            double yMargin = yRange * 0.1;
+            yAxis.setLowerBound(minY - yMargin);
+            yAxis.setUpperBound(maxY + yMargin);
+            yAxis.setTickUnit(yRange / 5);
+
+        } else {
+            // Para otras técnicas, usar auto-ranging
+            xAxis.setAutoRanging(true);
+            yAxis.setAutoRanging(true);
+        }
     }
 
     /**
