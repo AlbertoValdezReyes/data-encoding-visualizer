@@ -10,6 +10,8 @@ import java.util.Map;
  * Modula la amplitud de la portadora
  * Bit 0 = amplitud baja (o 0)
  * Bit 1 = amplitud alta
+ *
+ * Implementa fase continua para una visualizacion correcta
  */
 public class ASKGenerator extends DigitalToAnalogGenerator {
 
@@ -37,14 +39,21 @@ public class ASKGenerator extends DigitalToAnalogGenerator {
         double time = 0;
         double omega = getAngularFrequency(carrierFrequency);
 
+        // Calcular ciclos enteros por bit para visualizacion limpia
+        int cyclesPerBit = Math.max(1, (int) Math.round(carrierFrequency * bitDuration));
+        double adjustedOmega = 2 * Math.PI * cyclesPerBit / bitDuration;
+
         for (char bit : input.toCharArray()) {
             double bitAmplitude = (bit == '1') ? amplitude : amplitude * 0.2; // '0' tiene amplitud baja
 
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
-                double y = bitAmplitude * Math.sin(omega * t);
-                data.add(new SignalData(t, y));
+                double globalTime = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double localTime = (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                // Cada bit empieza en fase 0 para visualizacion clara
+                double y = bitAmplitude * Math.sin(adjustedOmega * localTime);
+                data.add(new SignalData(globalTime, y));
             }
+
             time += bitDuration;
         }
 

@@ -12,6 +12,8 @@ import java.util.Map;
  * Bit 0 = fase 0° (sin cambio de fase)
  * Bit 1 = fase 180° (inversión de fase)
  * Más resistente al ruido que ASK
+ *
+ * Implementa fase continua para una visualizacion correcta
  */
 public class PSKGenerator extends DigitalToAnalogGenerator {
 
@@ -37,20 +39,25 @@ public class PSKGenerator extends DigitalToAnalogGenerator {
         }
 
         double time = 0;
-        double omega = getAngularFrequency(carrierFrequency);
+
+        // Calcular ciclos enteros por bit para visualizacion limpia
+        int cyclesPerBit = Math.max(1, (int) Math.round(carrierFrequency * bitDuration));
+        double adjustedOmega = 2 * Math.PI * cyclesPerBit / bitDuration;
 
         for (char bit : input.toCharArray()) {
             // BPSK:
             // bit '0' = fase 0° (sin desplazamiento)
-            // bit '1' = fase 180° (π radianes)
+            // bit '1' = fase 180° (π radianes) - senal invertida
             double phaseShift = (bit == '1') ? Math.PI : 0;
 
-            // Generar onda sinusoidal con desplazamiento de fase
+            // Generar onda sinusoidal - cada bit empieza en fase 0 (o 180 para bit 1)
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
-                double y = amplitude * Math.sin(omega * t + phaseShift);
-                data.add(new SignalData(t, y));
+                double globalTime = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double localTime = (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double y = amplitude * Math.sin(adjustedOmega * localTime + phaseShift);
+                data.add(new SignalData(globalTime, y));
             }
+
             time += bitDuration;
         }
 

@@ -628,12 +628,12 @@ public class MainController {
         String techniqueName = currentGenerator.getName();
         String category = categoryComboBox.getValue();
 
+        // Desactivar auto-ranging para control manual en todos los casos
+        xAxis.setAutoRanging(false);
+        yAxis.setAutoRanging(false);
+
         // Para PCM y DM, configurar escala específica
         if (techniqueName.contains("PCM") || techniqueName.contains("DM")) {
-            // Desactivar auto-ranging para control manual
-            xAxis.setAutoRanging(false);
-            yAxis.setAutoRanging(false);
-
             // Configurar eje X (tiempo)
             xAxis.setLowerBound(0);
             xAxis.setUpperBound(maxX + 0.1);
@@ -657,9 +657,6 @@ public class MainController {
 
         } else if (category.contains("Analógico → Analógico")) {
             // Para modulaciones analógicas
-            xAxis.setAutoRanging(false);
-            yAxis.setAutoRanging(false);
-
             xAxis.setLowerBound(0);
             xAxis.setUpperBound(maxX);
             xAxis.setTickUnit(maxX / 10);
@@ -670,10 +667,48 @@ public class MainController {
             yAxis.setUpperBound(maxY + yMargin);
             yAxis.setTickUnit(yRange / 5);
 
+        } else if (category.contains("Digital → Digital")) {
+            // Para codificación de línea (NRZ, Manchester, AMI, etc.)
+            // Eje X: tiempo en unidades de bit
+            xAxis.setLowerBound(0);
+            xAxis.setUpperBound(maxX);
+            xAxis.setTickUnit(1.0);  // Un tick por bit
+
+            // Eje Y: niveles fijos para señales digitales (-1.5 a 1.5 para ver bien las transiciones)
+            yAxis.setLowerBound(-1.5);
+            yAxis.setUpperBound(1.5);
+            yAxis.setTickUnit(0.5);
+
+            System.out.println("Escala Digital→Digital: X=[0, " + maxX + "], Y=[-1.5, 1.5]");
+
+        } else if (category.contains("Digital → Analógico")) {
+            // Para modulaciones digitales (ASK, FSK, PSK, QAM)
+            xAxis.setLowerBound(0);
+            xAxis.setUpperBound(maxX);
+            // Calcular tick unit basado en la duración del bit
+            double tickX = maxX / Math.max(8, maxX);
+            xAxis.setTickUnit(tickX);
+
+            // Eje Y con margen para señales sinusoidales
+            double yRange = maxY - minY;
+            double yMargin = yRange * 0.15;
+            yAxis.setLowerBound(minY - yMargin);
+            yAxis.setUpperBound(maxY + yMargin);
+            yAxis.setTickUnit(yRange / 4);
+
+            System.out.println("Escala Digital→Analógico: X=[0, " + maxX + "], Y=[" + (minY - yMargin) + ", " + (maxY + yMargin) + "]");
+
         } else {
-            // Para otras técnicas, usar auto-ranging
-            xAxis.setAutoRanging(true);
-            yAxis.setAutoRanging(true);
+            // Fallback para otras técnicas
+            xAxis.setLowerBound(minX);
+            xAxis.setUpperBound(maxX);
+            xAxis.setTickUnit((maxX - minX) / 10);
+
+            double yRange = maxY - minY;
+            double yMargin = yRange * 0.1;
+            yAxis.setLowerBound(minY - yMargin);
+            yAxis.setUpperBound(maxY + yMargin);
+            yAxis.setTickUnit(yRange / 5);
         }
     }
 

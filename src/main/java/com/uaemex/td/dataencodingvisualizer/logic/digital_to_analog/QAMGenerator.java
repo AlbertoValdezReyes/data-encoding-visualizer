@@ -10,6 +10,8 @@ import java.util.Map;
  * Combina modulación de amplitud y fase
  * Procesa 2 bits a la vez (4-QAM)
  * 00, 01, 10, 11 -> diferentes combinaciones de amplitud y fase
+ *
+ * Implementa fase continua para una visualizacion correcta
  */
 public class QAMGenerator extends DigitalToAnalogGenerator {
 
@@ -34,7 +36,10 @@ public class QAMGenerator extends DigitalToAnalogGenerator {
         }
 
         double time = 0;
-        double omega = getAngularFrequency(carrierFrequency);
+
+        // Calcular ciclos enteros por bit para visualizacion limpia
+        int cyclesPerBit = Math.max(1, (int) Math.round(carrierFrequency * bitDuration));
+        double adjustedOmega = 2 * Math.PI * cyclesPerBit / bitDuration;
 
         // Procesar bits de 2 en 2 (4-QAM)
         for (int bitIdx = 0; bitIdx < input.length(); bitIdx += 2) {
@@ -65,14 +70,16 @@ public class QAMGenerator extends DigitalToAnalogGenerator {
                     amplitudeI = 0; amplitudeQ = 0;
             }
 
-            // Generar señal QAM: I*cos(ωt) + Q*sin(ωt)
+            // Generar señal QAM: I*cos(ωt) + Q*sin(ωt) - cada simbolo empieza en fase 0
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
-                double inPhase = amplitudeI * Math.cos(omega * t);
-                double quadrature = amplitudeQ * Math.sin(omega * t);
+                double globalTime = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double localTime = (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double inPhase = amplitudeI * Math.cos(adjustedOmega * localTime);
+                double quadrature = amplitudeQ * Math.sin(adjustedOmega * localTime);
                 double y = inPhase + quadrature;
-                data.add(new SignalData(t, y));
+                data.add(new SignalData(globalTime, y));
             }
+
             time += bitDuration;
         }
 

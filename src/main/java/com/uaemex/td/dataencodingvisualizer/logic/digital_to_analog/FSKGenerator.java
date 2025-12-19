@@ -11,6 +11,8 @@ import java.util.Map;
  * Bit 0 = frecuencia baja (f1)
  * Bit 1 = frecuencia alta (f2)
  * Usado en módems y transmisión de datos
+ *
+ * Implementa continuidad de fase para evitar discontinuidades en la señal
  */
 public class FSKGenerator extends DigitalToAnalogGenerator {
     private double frequencyLow;   // f1 para bit '0'
@@ -54,17 +56,27 @@ public class FSKGenerator extends DigitalToAnalogGenerator {
 
         double time = 0;
 
-        for (char bit : input.toCharArray()) {
-            // Seleccionar frecuencia según el bit
-            double frequency = (bit == '1') ? frequencyHigh : frequencyLow;
-            double omega = getAngularFrequency(frequency);
+        // Calcular ciclos enteros por bit para cada frecuencia
+        int cyclesLow = Math.max(1, (int) Math.round(frequencyLow * bitDuration));
+        int cyclesHigh = Math.max(2, (int) Math.round(frequencyHigh * bitDuration));
+        // Asegurar que las frecuencias sean distinguibles
+        if (cyclesLow >= cyclesHigh) cyclesHigh = cyclesLow + 1;
 
-            // Generar onda sinusoidal con la frecuencia seleccionada
+        double omegaLow = 2 * Math.PI * cyclesLow / bitDuration;
+        double omegaHigh = 2 * Math.PI * cyclesHigh / bitDuration;
+
+        for (char bit : input.toCharArray()) {
+            // Seleccionar frecuencia ajustada según el bit
+            double omega = (bit == '1') ? omegaHigh : omegaLow;
+
+            // Generar onda sinusoidal - cada bit empieza en fase 0
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
-                double y = amplitude * Math.sin(omega * t);
-                data.add(new SignalData(t, y));
+                double globalTime = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double localTime = (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double y = amplitude * Math.sin(omega * localTime);
+                data.add(new SignalData(globalTime, y));
             }
+
             time += bitDuration;
         }
 
