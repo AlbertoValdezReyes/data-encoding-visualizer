@@ -15,7 +15,7 @@
     </padding>
 
     <!-- Título -->
-    <Label text="Data Encoding Visualizer - UAEMEX"
+    <Label text="Visualización de Técnicas de Codificación de Datos"
            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
     <Separator/>
