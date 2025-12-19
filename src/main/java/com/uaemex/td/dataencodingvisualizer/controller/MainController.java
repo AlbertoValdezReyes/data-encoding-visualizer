@@ -755,23 +755,12 @@ public class MainController {
 
     @FXML
     private void onMouseEntered() {
-        generateButton.setStyle(
-                "-fx-background-color: #2980b9; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-cursor: hand;"
-        );
+        // Estilos manejados por CSS
     }
 
     @FXML
     private void onMouseExited() {
-        generateButton.setStyle(
-                "-fx-background-color: #3498db; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-font-weight: bold;"
-        );
+        // Estilos manejados por CSS
     }
 
     // ==================== MÉTODOS DEL PANEL DE ARMÓNICOS ====================

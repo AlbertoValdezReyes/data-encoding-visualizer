@@ -1,0 +1,596 @@
+/*
+ * Data Encoding Visualizer - Dark Professional Theme
+ * Universidad Autonoma del Estado de Mexico
+ * Transmision de Datos 2025
+ */
+
+/* ============================================
+   CONTENEDOR PRINCIPAL - DARK MODE
+   ============================================ */
+.root {
+    -fx-background-color: #0f0f1a;
+    -fx-font-family: "Segoe UI", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 14px;
+}
+
+.main-container {
+    -fx-background-color: linear-gradient(to bottom right, #0f0f1a, #1a1a2e);
+    -fx-padding: 30px;
+    -fx-spacing: 20px;
+}
+
+/* ============================================
+   TITULO PRINCIPAL
+   ============================================ */
+.title-label {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.5), 15, 0, 0, 0);
+}
+
+/* ============================================
+   SEPARADORES
+   ============================================ */
+.separator {
+    -fx-background-color: transparent;
+}
+
+.separator .line {
+    -fx-border-color: #2d2d44;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ============================================
+   LABELS
+   ============================================ */
+.label {
+    -fx-text-fill: #e2e8f0;
+}
+
+.section-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #94a3b8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 2, 0, 0, 1);
+}
+
+.value-label {
+    -fx-font-weight: 600;
+    -fx-text-fill: #818cf8;
+}
+
+/* ============================================
+   COMBOBOX - DARK
+   ============================================ */
+.combo-box {
+    -fx-background-color: linear-gradient(to bottom, #1e1e32, #16162a);
+    -fx-background-radius: 12px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 15px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 4);
+}
+
+.combo-box:hover {
+    -fx-border-color: #6366f1;
+    -fx-background-color: linear-gradient(to bottom, #252542, #1e1e32);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 12, 0, 0, 4);
+}
+
+.combo-box:focused {
+    -fx-border-color: #818cf8;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 15, 0, 0, 4);
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+    -fx-padding: 8px 12px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-background-color: #6366f1;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1e1e32;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #3d3d5c;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0, 0, 8);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+    -fx-padding: 12px 18px;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #2d2d44;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: linear-gradient(to right, #6366f1, #8b5cf6);
+    -fx-text-fill: white;
+}
+
+/* ============================================
+   TEXTFIELD - DARK
+   ============================================ */
+.text-field {
+    -fx-background-color: linear-gradient(to bottom, #1e1e32, #16162a);
+    -fx-background-radius: 12px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 14px 18px;
+    -fx-font-size: 15px;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #64748b;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 4);
+}
+
+.text-field:hover {
+    -fx-border-color: #6366f1;
+    -fx-background-color: linear-gradient(to bottom, #252542, #1e1e32);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.2), 12, 0, 0, 4);
+}
+
+.text-field:focused {
+    -fx-border-color: #818cf8;
+    -fx-border-width: 2px;
+    -fx-background-color: linear-gradient(to bottom, #252542, #1e1e32);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 15, 0, 0, 4);
+}
+
+/* ============================================
+   TEXTAREA - DARK
+   ============================================ */
+.text-area {
+    -fx-background-color: #1e1e32;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-width: 1px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #e2e8f0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 4);
+}
+
+.text-area .content {
+    -fx-background-color: #1e1e32;
+    -fx-background-radius: 12px;
+    -fx-padding: 15px;
+}
+
+.text-area:focused {
+    -fx-border-color: #6366f1;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ============================================
+   BOTONES - DARK NEON STYLE
+   ============================================ */
+.button {
+    -fx-background-color: linear-gradient(to bottom, #6366f1, #4f46e5);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 14px 28px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #818cf8;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.6), 15, 0, 0, 0);
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #818cf8, #6366f1);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.8), 25, 0, 0, 0);
+}
+
+.button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #4f46e5, #4338ca);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 8, 0, 0, 0);
+}
+
+/* Boton principal (Generar) - NEON GREEN */
+.generate-button {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+    -fx-border-color: #34d399;
+    -fx-font-size: 16px;
+    -fx-padding: 16px 35px;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.7), 20, 0, 0, 0);
+}
+
+.generate-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #34d399, #10b981);
+    -fx-effect: dropshadow(gaussian, rgba(52, 211, 153, 0.9), 30, 0, 0, 0);
+}
+
+.generate-button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.5), 10, 0, 0, 0);
+}
+
+/* Botones de armonicos - CYAN */
+.harmonic-button {
+    -fx-background-color: linear-gradient(to bottom, #06b6d4, #0891b2);
+    -fx-border-color: #22d3ee;
+    -fx-text-fill: white;
+    -fx-padding: 10px 16px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(6, 182, 212, 0.5), 10, 0, 0, 0);
+}
+
+.harmonic-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #22d3ee, #06b6d4);
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.8), 18, 0, 0, 0);
+}
+
+/* Botones de operadores - PURPLE */
+.operator-button {
+    -fx-background-color: linear-gradient(to bottom, #a855f7, #9333ea);
+    -fx-border-color: #c084fc;
+    -fx-text-fill: white;
+    -fx-padding: 10px 18px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(168, 85, 247, 0.5), 10, 0, 0, 0);
+}
+
+.operator-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #c084fc, #a855f7);
+    -fx-effect: dropshadow(gaussian, rgba(192, 132, 252, 0.8), 18, 0, 0, 0);
+}
+
+/* Botones de parentesis/pi - SLATE */
+.symbol-button {
+    -fx-background-color: linear-gradient(to bottom, #475569, #334155);
+    -fx-border-color: #64748b;
+    -fx-text-fill: white;
+    -fx-padding: 10px 16px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(71, 85, 105, 0.5), 8, 0, 0, 0);
+}
+
+.symbol-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #64748b, #475569);
+    -fx-effect: dropshadow(gaussian, rgba(100, 116, 139, 0.7), 12, 0, 0, 0);
+}
+
+/* Boton de limpiar - RED NEON */
+.clear-button {
+    -fx-background-color: linear-gradient(to bottom, #ef4444, #dc2626);
+    -fx-border-color: #f87171;
+    -fx-text-fill: white;
+    -fx-padding: 10px 18px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.5), 10, 0, 0, 0);
+}
+
+.clear-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #f87171, #ef4444);
+    -fx-effect: dropshadow(gaussian, rgba(248, 113, 113, 0.8), 18, 0, 0, 0);
+}
+
+/* ============================================
+   PANELES COLAPSABLES - GLASS MORPHISM
+   ============================================ */
+.panel-card {
+    -fx-background-color: rgba(30, 30, 50, 0.8);
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 6);
+}
+
+/* Panel de armonicos - CYAN ACCENT */
+.harmonics-panel {
+    -fx-background-color: linear-gradient(to bottom right, rgba(6, 182, 212, 0.15), rgba(30, 30, 50, 0.9));
+    -fx-border-color: #06b6d4;
+    -fx-border-width: 1px;
+}
+
+.harmonics-header {
+    -fx-background-color: transparent;
+    -fx-padding: 16px 20px;
+    -fx-cursor: hand;
+}
+
+.harmonics-header:hover {
+    -fx-background-color: rgba(6, 182, 212, 0.1);
+}
+
+.harmonics-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #22d3ee;
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.5), 8, 0, 0, 0);
+}
+
+.harmonics-icon {
+    -fx-text-fill: #22d3ee;
+    -fx-font-size: 14px;
+}
+
+/* Panel de parametros - AMBER ACCENT */
+.parameters-panel {
+    -fx-background-color: linear-gradient(to bottom right, rgba(245, 158, 11, 0.15), rgba(30, 30, 50, 0.9));
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 1px;
+}
+
+.parameters-header {
+    -fx-background-color: transparent;
+    -fx-padding: 16px 20px;
+    -fx-cursor: hand;
+}
+
+.parameters-header:hover {
+    -fx-background-color: rgba(245, 158, 11, 0.1);
+}
+
+.parameters-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #fbbf24;
+    -fx-effect: dropshadow(gaussian, rgba(251, 191, 36, 0.5), 8, 0, 0, 0);
+}
+
+.parameters-icon {
+    -fx-text-fill: #fbbf24;
+    -fx-font-size: 14px;
+}
+
+.parameter-value {
+    -fx-font-weight: bold;
+    -fx-text-fill: #fbbf24;
+    -fx-effect: dropshadow(gaussian, rgba(251, 191, 36, 0.3), 4, 0, 0, 0);
+}
+
+/* ============================================
+   SLIDERS - NEON STYLE
+   ============================================ */
+.slider {
+    -fx-padding: 12px 0;
+}
+
+.slider .track {
+    -fx-background-color: #2d2d44;
+    -fx-background-radius: 6px;
+    -fx-pref-height: 10px;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 0, 2);
+}
+
+.slider .thumb {
+    -fx-background-color: linear-gradient(to bottom, #6366f1, #4f46e5);
+    -fx-background-radius: 50%;
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+    -fx-border-color: #818cf8;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50%;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.7), 12, 0, 0, 0);
+}
+
+.slider .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #818cf8, #6366f1);
+    -fx-effect: dropshadow(gaussian, rgba(129, 140, 248, 0.9), 18, 0, 0, 0);
+}
+
+.slider:focused .thumb {
+    -fx-effect: dropshadow(gaussian, rgba(129, 140, 248, 1), 20, 0, 0, 0);
+}
+
+.slider .axis {
+    -fx-tick-label-fill: #94a3b8;
+}
+
+/* ============================================
+   GRAFICO - DARK GLASS
+   ============================================ */
+.chart-container {
+    -fx-background-color: linear-gradient(to bottom, rgba(30, 30, 50, 0.9), rgba(22, 22, 42, 0.95));
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0, 0, 8);
+}
+
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-plot-background {
+    -fx-background-color: linear-gradient(to bottom, #16162a, #1e1e32);
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #2d2d44;
+    -fx-stroke-width: 1;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #2d2d44;
+    -fx-stroke-width: 1;
+}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+}
+
+.chart-legend {
+    -fx-background-color: rgba(30, 30, 50, 0.9);
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 15px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 3);
+}
+
+.chart-legend-item {
+    -fx-text-fill: #e2e8f0;
+}
+
+.axis {
+    -fx-tick-label-fill: #94a3b8;
+    -fx-font-size: 11px;
+}
+
+.axis-label {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-weight: bold;
+}
+
+.axis .axis-tick-mark {
+    -fx-stroke: #475569;
+}
+
+.axis .axis-minor-tick-mark {
+    -fx-stroke: #334155;
+}
+
+/* Linea de la senal - NEON GLOW */
+.chart-series-line {
+    -fx-stroke: #22d3ee;
+    -fx-stroke-width: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.8), 10, 0, 0, 0);
+}
+
+.default-color0.chart-series-line {
+    -fx-stroke: #22d3ee;
+    -fx-effect: dropshadow(gaussian, rgba(34, 211, 238, 0.8), 10, 0, 0, 0);
+}
+
+.default-color1.chart-series-line {
+    -fx-stroke: #a855f7;
+    -fx-effect: dropshadow(gaussian, rgba(168, 85, 247, 0.8), 10, 0, 0, 0);
+}
+
+.default-color2.chart-series-line {
+    -fx-stroke: #10b981;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.8), 10, 0, 0, 0);
+}
+
+.chart-line-symbol {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ============================================
+   DESCRIPCION - GLASS CARD
+   ============================================ */
+.description-container {
+    -fx-background-color: linear-gradient(to bottom, rgba(30, 30, 50, 0.8), rgba(22, 22, 42, 0.9));
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #3d3d5c;
+    -fx-border-width: 1px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0, 0, 5);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.footer-separator {
+    -fx-text-fill: #475569;
+}
+
+/* ============================================
+   SCROLLBAR - DARK MINIMAL
+   ============================================ */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #1e1e32;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #475569;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #6366f1;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-shape: "";
+}
+
+/* ============================================
+   TOOLTIPS - DARK
+   ============================================ */
+.tooltip {
+    -fx-background-color: linear-gradient(to bottom, #2d2d44, #1e1e32);
+    -fx-background-radius: 10px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 12px;
+    -fx-padding: 10px 15px;
+    -fx-border-color: #6366f1;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 15, 0, 0, 5);
+}
+
+/* ============================================
+   FOCUS INDICATORS
+   ============================================ */
+.focus-indicator {
+    -fx-border-color: transparent;
+}
+
+*:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

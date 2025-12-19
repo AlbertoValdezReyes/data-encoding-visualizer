@@ -8,122 +8,121 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.uaemex.td.dataencodingvisualizer.controller.MainController"
-      spacing="15" style="-fx-background-color: #f5f5f5;">
+      styleClass="main-container"
+      spacing="18">
 
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="25" right="25" bottom="25" left="25"/>
     </padding>
 
-    <!-- Título -->
-    <Label text="Visualización de Técnicas de Codificación de Datos"
-           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    <!-- Titulo -->
+    <Label text="Visualizacion de Tecnicas de Codificacion de Datos"
+           styleClass="title-label"/>
 
     <Separator/>
 
-    <!-- Panel de Control - LADO A LADO -->
-    <HBox spacing="20" alignment="CENTER_LEFT">
-        <!-- Categoría -->
-        <VBox spacing="5">
-            <Label text="Categoría:" style="-fx-font-weight: bold;"/>
-            <ComboBox fx:id="categoryComboBox" prefWidth="280" promptText="Seleccione categoría"/>
+    <!-- Panel de Control -->
+    <HBox spacing="25" alignment="CENTER_LEFT">
+        <!-- Categoria -->
+        <VBox spacing="8">
+            <Label text="Categoria:" styleClass="section-label"/>
+            <ComboBox fx:id="categoryComboBox" prefWidth="300" promptText="Seleccione categoria"/>
         </VBox>
 
-        <!-- Técnica -->
-        <VBox spacing="5">
-            <Label text="Técnica de Codificación:" style="-fx-font-weight: bold;"/>
-            <ComboBox fx:id="techniqueComboBox" prefWidth="320" promptText="Seleccione técnica"/>
+        <!-- Tecnica -->
+        <VBox spacing="8">
+            <Label text="Tecnica de Codificacion:" styleClass="section-label"/>
+            <ComboBox fx:id="techniqueComboBox" prefWidth="340" promptText="Seleccione tecnica"/>
         </VBox>
     </HBox>
 
-    <!-- Input y Botón -->
-    <HBox spacing="15" alignment="CENTER_LEFT">
-        <VBox spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="Datos de Entrada:" style="-fx-font-weight: bold;"/>
+    <!-- Input y Boton -->
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+            <Label text="Datos de Entrada:" styleClass="section-label"/>
             <TextField fx:id="inputTextField"
                        promptText="Ej: 10110010"
-                       prefWidth="400"
-                       style="-fx-font-size: 14px; -fx-padding: 8px;"/>
+                       prefWidth="450"/>
         </VBox>
 
-        <VBox spacing="5" alignment="BOTTOM_LEFT">
-            <Label text=" " style="-fx-font-size: 1px;"/> <!-- Spacer invisible -->
+        <VBox spacing="8" alignment="BOTTOM_LEFT">
+            <Label text=" " style="-fx-font-size: 1px;"/>
             <Button fx:id="generateButton"
-                    text="Generar Señal"
-                    prefWidth="150"
-                    prefHeight="35"
-                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"
-                    onMouseEntered="#onMouseEntered"
-                    onMouseExited="#onMouseExited"/>
+                    text="Generar Senal"
+                    styleClass="generate-button"
+                    minWidth="200"
+                    prefWidth="200"
+                    prefHeight="42"/>
         </VBox>
     </HBox>
 
-    <!-- Panel de Armónicos (solo visible para categorías analógicas) -->
+    <!-- Panel de Armonicos -->
     <VBox fx:id="harmonicsPanel" spacing="0" visible="false" managed="false"
-          style="-fx-background-color: #e8f4fc; -fx-background-radius: 8; -fx-border-color: #3498db; -fx-border-radius: 8;">
+          styleClass="panel-card, harmonics-panel">
 
-        <!-- Header clickeable para toggle -->
-        <HBox spacing="10" alignment="CENTER_LEFT" onMouseClicked="#toggleHarmonicsContent"
-              style="-fx-padding: 10 15 10 15; -fx-cursor: hand;">
-            <Label fx:id="harmonicsToggleIcon" text="▼" style="-fx-font-size: 12px; -fx-text-fill: #3498db;"/>
-            <Label text="Constructor de Armónicos" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+        <!-- Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT" onMouseClicked="#toggleHarmonicsContent"
+              styleClass="harmonics-header">
+            <Label fx:id="harmonicsToggleIcon" text="▼" styleClass="harmonics-icon"/>
+            <Label text="Constructor de Armonicos" styleClass="harmonics-title"/>
         </HBox>
 
-        <!-- Contenido colapsable -->
-        <VBox fx:id="harmonicsContent" spacing="10" style="-fx-padding: 0 15 15 15;">
-            <!-- Botones de armónicos -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Armónicos:" style="-fx-font-weight: bold;"/>
-                <Button text="sin(t)" onAction="#addSin" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                <Button text="cos(t)" onAction="#addCos" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                <Button text="sin(2t)" onAction="#addSin2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                <Button text="cos(2t)" onAction="#addCos2" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                <Button text="sin(3t)" onAction="#addSin3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                <Button text="cos(3t)" onAction="#addCos3" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+        <!-- Contenido -->
+        <VBox fx:id="harmonicsContent" spacing="12" style="-fx-padding: 0 18 18 18;">
+            <!-- Botones de armonicos -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Armonicos:" styleClass="section-label"/>
+                <Button text="sin(t)" onAction="#addSin" styleClass="harmonic-button"/>
+                <Button text="cos(t)" onAction="#addCos" styleClass="harmonic-button"/>
+                <Button text="sin(2t)" onAction="#addSin2" styleClass="harmonic-button"/>
+                <Button text="cos(2t)" onAction="#addCos2" styleClass="harmonic-button"/>
+                <Button text="sin(3t)" onAction="#addSin3" styleClass="harmonic-button"/>
+                <Button text="cos(3t)" onAction="#addCos3" styleClass="harmonic-button"/>
             </HBox>
 
-            <!-- Operadores y coeficientes -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Operadores:" style="-fx-font-weight: bold;"/>
-                <Button text="+" onAction="#addPlus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="-" onAction="#addMinus" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="*" onAction="#addMultiply" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="/" onAction="#addDivide" style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="(" onAction="#addOpenParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-                <Button text=")" onAction="#addCloseParen" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-                <Button text="pi" onAction="#addPi" style="-fx-background-color: #34495e; -fx-text-fill: white;"/>
-                <Button text="Limpiar" onAction="#clearFunction" style="-fx-background-color: #c0392b; -fx-text-fill: white;"/>
+            <!-- Operadores -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Operadores:" styleClass="section-label"/>
+                <Button text="+" onAction="#addPlus" styleClass="operator-button"/>
+                <Button text="-" onAction="#addMinus" styleClass="operator-button"/>
+                <Button text="*" onAction="#addMultiply" styleClass="operator-button"/>
+                <Button text="/" onAction="#addDivide" styleClass="operator-button"/>
+                <Button text="(" onAction="#addOpenParen" styleClass="symbol-button"/>
+                <Button text=")" onAction="#addCloseParen" styleClass="symbol-button"/>
+                <Button text="pi" onAction="#addPi" styleClass="symbol-button"/>
+                <Button text="Limpiar" onAction="#clearFunction" styleClass="clear-button"/>
             </HBox>
         </VBox>
     </VBox>
 
-    <!-- Panel de Parámetros Técnicos -->
+    <!-- Panel de Parametros Tecnicos -->
     <VBox fx:id="parametersPanel" spacing="0" visible="false" managed="false"
-          style="-fx-background-color: #fef9e7; -fx-background-radius: 8; -fx-border-color: #f39c12; -fx-border-radius: 8;">
+          styleClass="panel-card, parameters-panel">
 
-        <!-- Header clickeable para toggle -->
-        <HBox spacing="10" alignment="CENTER_LEFT" onMouseClicked="#toggleParametersContent"
-              style="-fx-padding: 10 15 10 15; -fx-cursor: hand;">
-            <Label fx:id="parametersToggleIcon" text="▼" style="-fx-font-size: 12px; -fx-text-fill: #f39c12;"/>
-            <Label text="Parámetros Técnicos" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+        <!-- Header -->
+        <HBox spacing="12" alignment="CENTER_LEFT" onMouseClicked="#toggleParametersContent"
+              styleClass="parameters-header">
+            <Label fx:id="parametersToggleIcon" text="▼" styleClass="parameters-icon"/>
+            <Label text="Parametros Tecnicos" styleClass="parameters-title"/>
         </HBox>
 
-        <!-- Contenido colapsable -->
-        <VBox fx:id="parametersContent" spacing="15" style="-fx-padding: 0 15 15 15;">
+        <!-- Contenido -->
+        <VBox fx:id="parametersContent" spacing="18" style="-fx-padding: 0 18 18 18;">
             <!-- Fila 1: Frecuencia Portadora y Amplitud -->
-            <HBox spacing="30">
-                <VBox spacing="5" fx:id="carrierFrequencyBox" HBox.hgrow="ALWAYS">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Frecuencia Portadora:" style="-fx-font-weight: bold;"/>
-                        <Label fx:id="carrierFrequencyLabel" text="5.0 Hz" style="-fx-text-fill: #e67e22;"/>
+            <HBox spacing="40">
+                <VBox spacing="6" fx:id="carrierFrequencyBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Frecuencia Portadora:" styleClass="section-label"/>
+                        <Label fx:id="carrierFrequencyLabel" text="5.0 Hz" styleClass="parameter-value"/>
                     </HBox>
                     <Slider fx:id="carrierFrequencySlider" min="1" max="50" value="5"
                             showTickLabels="true" showTickMarks="true" majorTickUnit="10" minorTickCount="4"/>
                 </VBox>
 
-                <VBox spacing="5" fx:id="amplitudeBox" HBox.hgrow="ALWAYS">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Amplitud:" style="-fx-font-weight: bold;"/>
-                        <Label fx:id="amplitudeLabel" text="1.0 V" style="-fx-text-fill: #e67e22;"/>
+                <VBox spacing="6" fx:id="amplitudeBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Amplitud:" styleClass="section-label"/>
+                        <Label fx:id="amplitudeLabel" text="1.0 V" styleClass="parameter-value"/>
                     </HBox>
                     <Slider fx:id="amplitudeSlider" min="0.1" max="5" value="1"
                             showTickLabels="true" showTickMarks="true" majorTickUnit="1" minorTickCount="4"/>
@@ -131,32 +130,32 @@
             </HBox>
 
             <!-- Fila 2: Bit Rate y Sampling Rate -->
-            <HBox spacing="30">
-                <VBox spacing="5" fx:id="bitRateBox" HBox.hgrow="ALWAYS">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Tasa de Bits:" style="-fx-font-weight: bold;"/>
-                        <Label fx:id="bitRateLabel" text="1.0 bps" style="-fx-text-fill: #e67e22;"/>
+            <HBox spacing="40">
+                <VBox spacing="6" fx:id="bitRateBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Tasa de Bits:" styleClass="section-label"/>
+                        <Label fx:id="bitRateLabel" text="1.0 bps" styleClass="parameter-value"/>
                     </HBox>
                     <Slider fx:id="bitRateSlider" min="0.5" max="10" value="1"
                             showTickLabels="true" showTickMarks="true" majorTickUnit="2" minorTickCount="3"/>
                 </VBox>
 
-                <VBox spacing="5" fx:id="samplingRateBox" HBox.hgrow="ALWAYS">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Frecuencia Muestreo:" style="-fx-font-weight: bold;"/>
-                        <Label fx:id="samplingRateLabel" text="16 muestras" style="-fx-text-fill: #e67e22;"/>
+                <VBox spacing="6" fx:id="samplingRateBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Frecuencia Muestreo:" styleClass="section-label"/>
+                        <Label fx:id="samplingRateLabel" text="16 muestras" styleClass="parameter-value"/>
                     </HBox>
                     <Slider fx:id="samplingRateSlider" min="4" max="64" value="16"
                             showTickLabels="true" showTickMarks="true" majorTickUnit="16" minorTickCount="3"/>
                 </VBox>
             </HBox>
 
-            <!-- Fila 3: Bits por Muestra (solo PCM) -->
-            <HBox spacing="30">
-                <VBox spacing="5" fx:id="bitsPerSampleBox" HBox.hgrow="ALWAYS">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Bits por Muestra:" style="-fx-font-weight: bold;"/>
-                        <Label fx:id="bitsPerSampleLabel" text="3 bits (8 niveles)" style="-fx-text-fill: #e67e22;"/>
+            <!-- Fila 3: Bits por Muestra -->
+            <HBox spacing="40">
+                <VBox spacing="6" fx:id="bitsPerSampleBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Bits por Muestra:" styleClass="section-label"/>
+                        <Label fx:id="bitsPerSampleLabel" text="3 bits (8 niveles)" styleClass="parameter-value"/>
                     </HBox>
                     <Slider fx:id="bitsPerSampleSlider" min="2" max="8" value="3"
                             showTickLabels="true" showTickMarks="true" majorTickUnit="1" minorTickCount="0"
@@ -166,13 +165,13 @@
         </VBox>
     </VBox>
 
-    <!-- Gráfico -->
-    <VBox VBox.vgrow="ALWAYS" spacing="5">
-        <Label text="Señal Generada:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+    <!-- Grafico -->
+    <VBox VBox.vgrow="ALWAYS" spacing="8" styleClass="chart-container">
+        <Label text="Senal Generada:" styleClass="section-label" style="-fx-font-size: 15px;"/>
         <LineChart fx:id="signalChart"
                    prefHeight="350"
                    legendVisible="true"
-                   style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                   styleClass="chart">
             <xAxis>
                 <NumberAxis fx:id="xAxis" label="Tiempo (segundos)" side="BOTTOM" autoRanging="true"/>
             </xAxis>
@@ -182,24 +181,21 @@
         </LineChart>
     </VBox>
 
-    <!-- Descripción -->
-    <VBox spacing="5">
-        <Label text="Descripción de la Técnica:" style="-fx-font-weight: bold;"/>
+    <!-- Descripcion -->
+    <VBox spacing="8" styleClass="description-container">
+        <Label text="Descripcion de la Tecnica:" styleClass="section-label"/>
         <TextArea fx:id="descriptionTextArea"
-                  prefHeight="90"
+                  prefHeight="100"
                   wrapText="true"
-                  editable="false"
-                  style="-fx-font-size: 13px; -fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 1;"/>
+                  editable="false"/>
     </VBox>
 
     <!-- Footer -->
     <Separator/>
     <HBox alignment="CENTER" spacing="20">
-        <Label text="Universidad Autónoma del Estado de México"
-               style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-        <Label text="•" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-        <Label text="Transmisión de Datos - 2025"
-               style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+        <Label text="Universidad Autonoma del Estado de Mexico" styleClass="footer-label"/>
+        <Label text="•" styleClass="footer-separator"/>
+        <Label text="Transmision de Datos - 2025" styleClass="footer-label"/>
     </HBox>
 
 </VBox>
