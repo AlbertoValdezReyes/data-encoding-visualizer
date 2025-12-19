@@ -327,6 +327,7 @@ public class MainController {
 
     /**
      * Actualiza el placeholder del campo de entrada según la categoría seleccionada.
+     * Conserva la función si se cambia entre técnicas analógicas.
      *
      * @param category La categoría actualmente seleccionada
      */
@@ -334,15 +335,25 @@ public class MainController {
         boolean isAnalog = category.contains("Analógico → Analógico") ||
                 category.contains("Analógico → Digital");
 
+        String currentText = inputTextField.getText();
+        boolean currentTextIsFunction = currentText != null && !currentText.isEmpty()
+                && !currentText.matches("[01]+");  // No es binario = es función
+
         if (isAnalog) {
             inputTextField.setPromptText("Función: sin(t), cos(t), sin(t)+cos(2*t), etc.");
-            inputTextField.clear();
+            // Solo limpiar si el texto actual es binario (viene de categoría digital)
+            if (!currentTextIsFunction) {
+                inputTextField.clear();
+            }
             showHarmonicsPanel(true);
             removeDigitalFilter();
         } else {
             inputTextField.setPromptText("Ej: 10110010");
-            inputTextField.clear();
-            inputTextField.setText("10110010");
+            // Solo cambiar si el texto actual NO es binario válido
+            if (currentText == null || currentText.isEmpty() || !currentText.matches("[01]+")) {
+                inputTextField.clear();
+                inputTextField.setText("10110010");
+            }
             showHarmonicsPanel(false);
             applyDigitalFilter();
         }
@@ -414,9 +425,15 @@ public class MainController {
 
     /**
      * Remueve el filtro de entrada digital para permitir funciones matemáticas.
+     * Preserva el texto actual del campo.
      */
     private void removeDigitalFilter() {
+        String currentText = inputTextField.getText();
         inputTextField.setTextFormatter(null);
+        // Restaurar el texto después de quitar el formatter
+        if (currentText != null && !currentText.isEmpty()) {
+            inputTextField.setText(currentText);
+        }
     }
 
     /**
