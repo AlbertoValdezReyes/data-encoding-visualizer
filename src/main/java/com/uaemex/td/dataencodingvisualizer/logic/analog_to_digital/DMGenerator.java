@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Delta Modulation (DM) - Según Stallings
+ * Delta Modulation (DM)
  *
  * Delta Modulation es una forma simplificada de PCM que transmite solo 1 bit
  * por muestra, indicando si la señal subió o bajó respecto a la aproximación anterior.
@@ -22,7 +22,7 @@ import java.util.Map;
  * - No requiere codificación compleja
  * - Bajo costo de hardware
  *
- * PROBLEMAS (según Stallings):
+ * PROBLEMAS:
  *
  * 1. SLOPE OVERLOAD (Sobrecarga de pendiente):
  *    - Ocurre cuando la señal cambia más rápido que δ*fs
@@ -40,7 +40,6 @@ import java.util.Map;
  *
  * SOLUCIÓN: Adaptive Delta Modulation (ADM) - ajusta δ dinámicamente
  *
- * Referencia: Stallings, W. "Comunicaciones y Redes de Computadores"
  *
  * @author UAEMEX - Transmisión de Datos
  */
@@ -81,11 +80,15 @@ public class DMGenerator extends AnalogToDigitalGenerator {
         // Para almacenar los bits transmitidos
         StringBuilder bitStream = new StringBuilder();
 
+
         // Variables para detectar slope overload y granular noise
         int slopeOverloadCount = 0;
         int granularNoiseCount = 0;
         int consecutiveSameBits = 0;
         int lastBit = -1;
+
+        // Guardamos el valor previo para poder dibujar el escalón vertical correctamente
+        double prevApproximation = approximation;
 
         for (int i = 0; i < samplingRate; i++) {
             double t = i * sampleInterval;
@@ -106,14 +109,13 @@ public class DMGenerator extends AnalogToDigitalGenerator {
 
             bitStream.append(bit);
 
-            // Detectar slope overload (muchos bits iguales consecutivos)
+            // Detectar slope overload (código original...)
             if (bit == lastBit) {
                 consecutiveSameBits++;
                 if (consecutiveSameBits >= 3) {
                     slopeOverloadCount++;
                 }
             } else {
-                // Detectar ruido granular (alternancia rápida 1-0-1-0)
                 if (consecutiveSameBits == 0 && lastBit != -1) {
                     granularNoiseCount++;
                 }
@@ -121,17 +123,17 @@ public class DMGenerator extends AnalogToDigitalGenerator {
             }
             lastBit = bit;
 
-            // Dibujar la señal escalonada (aproximación)
-            // Línea horizontal en el nivel actual
-            data.add(new SignalData(t, approximation - (bit == 1 ? delta : -delta)));
+            // Añadimos un punto en el tiempo 't' con el valor ANTERIOR
+            data.add(new SignalData(t, prevApproximation));
 
-            // Transición vertical
-            if (i > 0) {
-                data.add(new SignalData(t, approximation));
-            }
+            // Obliga a la gráfica a dibujar una línea vertical recta
+            data.add(new SignalData(t, approximation));
 
-            // Mantener el nivel hasta la siguiente muestra
-            data.add(new SignalData(tNext - 0.001, approximation));
+            // Añadimos el punto al final del intervalo con el valor NUEVO
+            data.add(new SignalData(tNext, approximation));
+
+            // Actualizamos el valor previo para la siguiente vuelta
+            prevApproximation = approximation;
         }
 
         // Imprimir información de la modulación
@@ -143,12 +145,12 @@ public class DMGenerator extends AnalogToDigitalGenerator {
         System.out.println("Total bits: " + bitStream.length());
 
         if (slopeOverloadCount > samplingRate / 8) {
-            System.out.println("⚠ ADVERTENCIA: Posible SLOPE OVERLOAD detectado");
-            System.out.println("  Solución: Aumentar δ o la tasa de muestreo");
+            System.out.println("ADVERTENCIA: Posible SLOPE OVERLOAD detectado");
+            System.out.println("Solución: Aumentar δ o la tasa de muestreo");
         }
         if (granularNoiseCount > samplingRate / 4) {
-            System.out.println("⚠ ADVERTENCIA: Posible RUIDO GRANULAR detectado");
-            System.out.println("  Solución: Reducir δ");
+            System.out.println("ADVERTENCIA: Posible RUIDO GRANULAR detectado");
+            System.out.println("Solución: Reducir δ");
         }
 
         return data;
@@ -175,7 +177,7 @@ public class DMGenerator extends AnalogToDigitalGenerator {
 
     @Override
     public String getDescription() {
-        return "DM (Stallings): Transmite 1 bit por muestra.\n" +
+        return "DM : Transmite 1 bit por muestra.\n" +
                "• Bit 1: señal > aproximación → aproximación sube δ\n" +
                "• Bit 0: señal < aproximación → aproximación baja δ\n" +
                "Problemas: Slope Overload (señal cambia muy rápido) y\n" +

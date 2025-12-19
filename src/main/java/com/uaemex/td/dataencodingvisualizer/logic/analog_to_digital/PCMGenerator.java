@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Pulse Code Modulation (PCM) - Según Stallings
+ * Pulse Code Modulation (PCM)
  *
  * PCM es la técnica más común para convertir señales analógicas a digitales.
  * El proceso consta de tres pasos:
@@ -178,7 +178,7 @@ public class PCMGenerator extends AnalogToDigitalGenerator {
 
     @Override
     public String getDescription() {
-        return "PCM (Stallings): Conversión analógica-digital en 3 pasos:\n" +
+        return "PCM: Conversión analógica-digital en 3 pasos:\n" +
                "1) Muestreo: fs >= 2*fm (Nyquist)\n" +
                "2) Cuantización: L = 2^n niveles (" + quantizationLevels + " niveles, " + bitsPerSample + " bits)\n" +
                "3) Codificación: cada nivel → código binario\n" +
