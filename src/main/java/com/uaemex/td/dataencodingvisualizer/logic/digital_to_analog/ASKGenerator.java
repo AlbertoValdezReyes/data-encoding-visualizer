@@ -22,22 +22,30 @@ public class ASKGenerator extends DigitalToAnalogGenerator {
         }
 
         // Parámetros
-        if (params != null && params.containsKey("carrierFrequency")) {
-            carrierFrequency = (Double) params.get("carrierFrequency");
+        if (params != null) {
+            if (params.containsKey("carrierFrequency")) {
+                carrierFrequency = (Double) params.get("carrierFrequency");
+            }
+            if (params.containsKey("amplitude")) {
+                amplitude = (Double) params.get("amplitude");
+            }
+            if (params.containsKey("bitDuration")) {
+                bitDuration = (Double) params.get("bitDuration");
+            }
         }
 
         double time = 0;
         double omega = getAngularFrequency(carrierFrequency);
 
         for (char bit : input.toCharArray()) {
-            double amplitude = (bit == '1') ? 1.0 : 0.2; // '0' tiene amplitud baja
+            double bitAmplitude = (bit == '1') ? amplitude : amplitude * 0.2; // '0' tiene amplitud baja
 
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT);
-                double y = amplitude * Math.sin(omega * t);
+                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double y = bitAmplitude * Math.sin(omega * t);
                 data.add(new SignalData(t, y));
             }
-            time++;
+            time += bitDuration;
         }
 
         return data;

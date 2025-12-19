@@ -21,8 +21,16 @@ public class QAMGenerator extends DigitalToAnalogGenerator {
             return data;
         }
 
-        if (params != null && params.containsKey("carrierFrequency")) {
-            carrierFrequency = (Double) params.get("carrierFrequency");
+        if (params != null) {
+            if (params.containsKey("carrierFrequency")) {
+                carrierFrequency = (Double) params.get("carrierFrequency");
+            }
+            if (params.containsKey("amplitude")) {
+                amplitude = (Double) params.get("amplitude");
+            }
+            if (params.containsKey("bitDuration")) {
+                bitDuration = (Double) params.get("bitDuration");
+            }
         }
 
         double time = 0;
@@ -37,20 +45,21 @@ public class QAMGenerator extends DigitalToAnalogGenerator {
                 dibits = input.substring(bitIdx) + "0"; // Padding si es impar
             }
 
-            // Mapeo 4-QAM
+            // Mapeo 4-QAM (escalado por amplitud)
             double amplitudeI, amplitudeQ;
+            double scaleFactor = amplitude * 0.5;
             switch (dibits) {
                 case "00":
-                    amplitudeI = 0.5; amplitudeQ = 0.5;
+                    amplitudeI = scaleFactor; amplitudeQ = scaleFactor;
                     break;
                 case "01":
-                    amplitudeI = 0.5; amplitudeQ = -0.5;
+                    amplitudeI = scaleFactor; amplitudeQ = -scaleFactor;
                     break;
                 case "10":
-                    amplitudeI = -0.5; amplitudeQ = 0.5;
+                    amplitudeI = -scaleFactor; amplitudeQ = scaleFactor;
                     break;
                 case "11":
-                    amplitudeI = -0.5; amplitudeQ = -0.5;
+                    amplitudeI = -scaleFactor; amplitudeQ = -scaleFactor;
                     break;
                 default:
                     amplitudeI = 0; amplitudeQ = 0;
@@ -58,13 +67,13 @@ public class QAMGenerator extends DigitalToAnalogGenerator {
 
             // Generar señal QAM: I*cos(ωt) + Q*sin(ωt)
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT);
+                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
                 double inPhase = amplitudeI * Math.cos(omega * t);
                 double quadrature = amplitudeQ * Math.sin(omega * t);
                 double y = inPhase + quadrature;
                 data.add(new SignalData(t, y));
             }
-            time++;
+            time += bitDuration;
         }
 
         return data;

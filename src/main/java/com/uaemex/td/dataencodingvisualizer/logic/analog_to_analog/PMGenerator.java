@@ -34,6 +34,9 @@ public class PMGenerator extends AnalogToAnalogGenerator {
             if (params.containsKey("carrierFrequency")) {
                 carrierFrequency = (Double) params.get("carrierFrequency");
             }
+            if (params.containsKey("amplitude")) {
+                carrierAmplitude = (Double) params.get("amplitude");
+            }
             if (params.containsKey("messageFrequency")) {
                 messageFrequency = (Double) params.get("messageFrequency");
             }
@@ -67,7 +70,7 @@ public class PMGenerator extends AnalogToAnalogGenerator {
 
             double carrierPhase = getAngularFrequency(carrierFrequency) * t;
             double modulatedPhase = phaseDeviation * message;
-            double y = Math.sin(carrierPhase + modulatedPhase);
+            double y = carrierAmplitude * Math.sin(carrierPhase + modulatedPhase);
 
             data.add(new SignalData(t, y));
         }

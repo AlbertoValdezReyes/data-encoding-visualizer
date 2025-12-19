@@ -24,8 +24,16 @@ public class PSKGenerator extends DigitalToAnalogGenerator {
         }
 
         // Parámetros opcionales
-        if (params != null && params.containsKey("carrierFrequency")) {
-            carrierFrequency = (Double) params.get("carrierFrequency");
+        if (params != null) {
+            if (params.containsKey("carrierFrequency")) {
+                carrierFrequency = (Double) params.get("carrierFrequency");
+            }
+            if (params.containsKey("amplitude")) {
+                amplitude = (Double) params.get("amplitude");
+            }
+            if (params.containsKey("bitDuration")) {
+                bitDuration = (Double) params.get("bitDuration");
+            }
         }
 
         double time = 0;
@@ -39,11 +47,11 @@ public class PSKGenerator extends DigitalToAnalogGenerator {
 
             // Generar onda sinusoidal con desplazamiento de fase
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT);
-                double y = Math.sin(omega * t + phaseShift);
+                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double y = amplitude * Math.sin(omega * t + phaseShift);
                 data.add(new SignalData(t, y));
             }
-            time++;
+            time += bitDuration;
         }
 
         return data;

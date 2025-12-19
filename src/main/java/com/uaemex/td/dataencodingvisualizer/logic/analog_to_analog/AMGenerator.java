@@ -58,6 +58,9 @@ public class AMGenerator extends AnalogToAnalogGenerator {
             if (params.containsKey("carrierFrequency")) {
                 carrierFrequency = (Double) params.get("carrierFrequency");
             }
+            if (params.containsKey("amplitude")) {
+                carrierAmplitude = (Double) params.get("amplitude");
+            }
             if (params.containsKey("messageFrequency")) {
                 messageFrequency = (Double) params.get("messageFrequency");
             }
@@ -112,9 +115,9 @@ public class AMGenerator extends AnalogToAnalogGenerator {
             // cos(2π * fc * t) - Portadora
             double carrier = Math.cos(getAngularFrequency(carrierFrequency) * t);
 
-            // s(t) = [1 + na * x(t)] * cos(2π * fc * t)
+            // s(t) = Ac * [1 + na * x(t)] * cos(2π * fc * t)
             double envelope = 1.0 + (modulationIndex * messageSignal);
-            double modulatedSignal = envelope * carrier;
+            double modulatedSignal = carrierAmplitude * envelope * carrier;
 
             data.add(new SignalData(t, modulatedSignal));
         }

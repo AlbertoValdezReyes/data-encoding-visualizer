@@ -38,6 +38,18 @@ public class FSKGenerator extends DigitalToAnalogGenerator {
             if (params.containsKey("frequencyHigh")) {
                 frequencyHigh = (Double) params.get("frequencyHigh");
             }
+            if (params.containsKey("carrierFrequency")) {
+                // Para FSK, ajustamos las frecuencias basadas en la frecuencia portadora
+                double fc = (Double) params.get("carrierFrequency");
+                frequencyLow = fc * 0.6;   // 60% de fc para bit '0'
+                frequencyHigh = fc * 1.4;  // 140% de fc para bit '1'
+            }
+            if (params.containsKey("amplitude")) {
+                amplitude = (Double) params.get("amplitude");
+            }
+            if (params.containsKey("bitDuration")) {
+                bitDuration = (Double) params.get("bitDuration");
+            }
         }
 
         double time = 0;
@@ -49,11 +61,11 @@ public class FSKGenerator extends DigitalToAnalogGenerator {
 
             // Generar onda sinusoidal con la frecuencia seleccionada
             for (int i = 0; i < SAMPLES_PER_BIT; i++) {
-                double t = time + (i / (double) SAMPLES_PER_BIT);
-                double y = Math.sin(omega * t);
+                double t = time + (i / (double) SAMPLES_PER_BIT) * bitDuration;
+                double y = amplitude * Math.sin(omega * t);
                 data.add(new SignalData(t, y));
             }
-            time++;
+            time += bitDuration;
         }
 
         return data;

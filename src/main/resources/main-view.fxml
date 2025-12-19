@@ -96,6 +96,76 @@
         </VBox>
     </VBox>
 
+    <!-- Panel de Parámetros Técnicos -->
+    <VBox fx:id="parametersPanel" spacing="0" visible="false" managed="false"
+          style="-fx-background-color: #fef9e7; -fx-background-radius: 8; -fx-border-color: #f39c12; -fx-border-radius: 8;">
+
+        <!-- Header clickeable para toggle -->
+        <HBox spacing="10" alignment="CENTER_LEFT" onMouseClicked="#toggleParametersContent"
+              style="-fx-padding: 10 15 10 15; -fx-cursor: hand;">
+            <Label fx:id="parametersToggleIcon" text="▼" style="-fx-font-size: 12px; -fx-text-fill: #f39c12;"/>
+            <Label text="Parámetros Técnicos" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+        </HBox>
+
+        <!-- Contenido colapsable -->
+        <VBox fx:id="parametersContent" spacing="15" style="-fx-padding: 0 15 15 15;">
+            <!-- Fila 1: Frecuencia Portadora y Amplitud -->
+            <HBox spacing="30">
+                <VBox spacing="5" fx:id="carrierFrequencyBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Frecuencia Portadora:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="carrierFrequencyLabel" text="5.0 Hz" style="-fx-text-fill: #e67e22;"/>
+                    </HBox>
+                    <Slider fx:id="carrierFrequencySlider" min="1" max="50" value="5"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="10" minorTickCount="4"/>
+                </VBox>
+
+                <VBox spacing="5" fx:id="amplitudeBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Amplitud:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="amplitudeLabel" text="1.0 V" style="-fx-text-fill: #e67e22;"/>
+                    </HBox>
+                    <Slider fx:id="amplitudeSlider" min="0.1" max="5" value="1"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="1" minorTickCount="4"/>
+                </VBox>
+            </HBox>
+
+            <!-- Fila 2: Bit Rate y Sampling Rate -->
+            <HBox spacing="30">
+                <VBox spacing="5" fx:id="bitRateBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Tasa de Bits:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="bitRateLabel" text="1.0 bps" style="-fx-text-fill: #e67e22;"/>
+                    </HBox>
+                    <Slider fx:id="bitRateSlider" min="0.5" max="10" value="1"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="2" minorTickCount="3"/>
+                </VBox>
+
+                <VBox spacing="5" fx:id="samplingRateBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Frecuencia Muestreo:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="samplingRateLabel" text="16 muestras" style="-fx-text-fill: #e67e22;"/>
+                    </HBox>
+                    <Slider fx:id="samplingRateSlider" min="4" max="64" value="16"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="16" minorTickCount="3"/>
+                </VBox>
+            </HBox>
+
+            <!-- Fila 3: Bits por Muestra (solo PCM) -->
+            <HBox spacing="30">
+                <VBox spacing="5" fx:id="bitsPerSampleBox" HBox.hgrow="ALWAYS">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Bits por Muestra:" style="-fx-font-weight: bold;"/>
+                        <Label fx:id="bitsPerSampleLabel" text="3 bits (8 niveles)" style="-fx-text-fill: #e67e22;"/>
+                    </HBox>
+                    <Slider fx:id="bitsPerSampleSlider" min="2" max="8" value="3"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="1" minorTickCount="0"
+                            snapToTicks="true" blockIncrement="1"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </VBox>
+
     <!-- Gráfico -->
     <VBox VBox.vgrow="ALWAYS" spacing="5">
         <Label text="Señal Generada:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>

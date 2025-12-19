@@ -35,6 +35,9 @@ public class FMGenerator extends AnalogToAnalogGenerator {
             if (params.containsKey("carrierFrequency")) {
                 carrierFrequency = (Double) params.get("carrierFrequency");
             }
+            if (params.containsKey("amplitude")) {
+                carrierAmplitude = (Double) params.get("amplitude");
+            }
             if (params.containsKey("messageFrequency")) {
                 messageFrequency = (Double) params.get("messageFrequency");
             }
@@ -70,7 +73,7 @@ public class FMGenerator extends AnalogToAnalogGenerator {
 
             double instantFreq = carrierFrequency + frequencyDeviation * message;
             phase += getAngularFrequency(instantFreq) * dt;
-            double y = Math.sin(phase);
+            double y = carrierAmplitude * Math.sin(phase);
 
             data.add(new SignalData(t, y));
         }

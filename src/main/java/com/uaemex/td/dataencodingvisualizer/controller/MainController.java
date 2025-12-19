@@ -14,6 +14,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.*;
@@ -46,6 +47,32 @@ public class MainController {
     @FXML private VBox harmonicsContent;
     @FXML private Label harmonicsToggleIcon;
 
+    // Componentes del panel de parámetros técnicos
+    @FXML private VBox parametersPanel;
+    @FXML private VBox parametersContent;
+    @FXML private Label parametersToggleIcon;
+
+    // Sliders de parámetros
+    @FXML private Slider carrierFrequencySlider;
+    @FXML private Slider amplitudeSlider;
+    @FXML private Slider bitRateSlider;
+    @FXML private Slider samplingRateSlider;
+    @FXML private Slider bitsPerSampleSlider;
+
+    // Labels de valores de parámetros
+    @FXML private Label carrierFrequencyLabel;
+    @FXML private Label amplitudeLabel;
+    @FXML private Label bitRateLabel;
+    @FXML private Label samplingRateLabel;
+    @FXML private Label bitsPerSampleLabel;
+
+    // Contenedores de parámetros (para mostrar/ocultar)
+    @FXML private VBox carrierFrequencyBox;
+    @FXML private VBox amplitudeBox;
+    @FXML private VBox bitRateBox;
+    @FXML private VBox samplingRateBox;
+    @FXML private VBox bitsPerSampleBox;
+
     /**
      * Mapa que almacena los generadores organizados por categoría.
      * Key: Nombre de la categoría
@@ -76,6 +103,7 @@ public class MainController {
             setupEventHandlers();
             setDefaultValues();
             initializeHarmonicsPanel();
+            initializeParametersPanel();
 
             System.out.println("=== INICIALIZACION COMPLETADA EXITOSAMENTE ===");
 
@@ -283,6 +311,9 @@ public class MainController {
                     String category = categoryComboBox.getValue();
                     updateInputFieldPlaceholder(category);
 
+                    // Actualizar visibilidad de parámetros según la técnica
+                    updateParametersVisibility(category, selectedTechnique);
+
                     System.out.println("Generador establecido: " + generator.getClass().getSimpleName());
                     return;
                 }
@@ -314,6 +345,57 @@ public class MainController {
             inputTextField.setText("10110010");
             showHarmonicsPanel(false);
             applyDigitalFilter();
+        }
+
+        // Actualizar visibilidad del panel de parámetros
+        String technique = techniqueComboBox.getValue();
+        updateParametersVisibility(category, technique);
+    }
+
+    /**
+     * Actualiza la visibilidad de los parámetros según la categoría y técnica seleccionada.
+     */
+    private void updateParametersVisibility(String category, String technique) {
+        boolean isDigitalToAnalog = category != null && category.contains("Digital → Analógico");
+        boolean isAnalogToAnalog = category != null && category.contains("Analógico → Analógico");
+        boolean isAnalogToDigital = category != null && category.contains("Analógico → Digital");
+        boolean isPCM = technique != null && technique.contains("PCM");
+
+        // Mostrar panel para categorías que usan parámetros
+        boolean showParams = isDigitalToAnalog || isAnalogToAnalog || isAnalogToDigital;
+        showParametersPanel(showParams);
+
+        // Frecuencia portadora y amplitud: Digital→Analógico y Analógico→Analógico
+        setBoxVisible(carrierFrequencyBox, isDigitalToAnalog || isAnalogToAnalog);
+        setBoxVisible(amplitudeBox, isDigitalToAnalog || isAnalogToAnalog);
+
+        // Bit Rate: solo Digital→Analógico
+        setBoxVisible(bitRateBox, isDigitalToAnalog);
+
+        // Sampling Rate: solo Analógico→Digital
+        setBoxVisible(samplingRateBox, isAnalogToDigital);
+
+        // Bits per Sample: solo PCM
+        setBoxVisible(bitsPerSampleBox, isPCM);
+    }
+
+    /**
+     * Muestra u oculta un contenedor VBox.
+     */
+    private void setBoxVisible(VBox box, boolean visible) {
+        if (box != null) {
+            box.setVisible(visible);
+            box.setManaged(visible);
+        }
+    }
+
+    /**
+     * Muestra u oculta el panel de parámetros técnicos.
+     */
+    private void showParametersPanel(boolean show) {
+        if (parametersPanel != null) {
+            parametersPanel.setVisible(show);
+            parametersPanel.setManaged(show);
         }
     }
 
@@ -397,6 +479,44 @@ public class MainController {
 
         try {
             Map<String, Object> params = new HashMap<>();
+            String technique = techniqueComboBox.getValue();
+
+            // Parámetros para Digital→Analógico y Analógico→Analógico
+            if (category.contains("Digital → Analógico") || category.contains("Analógico → Analógico")) {
+                if (carrierFrequencySlider != null) {
+                    params.put("carrierFrequency", carrierFrequencySlider.getValue());
+                    System.out.println("Frecuencia portadora: " + carrierFrequencySlider.getValue() + " Hz");
+                }
+                if (amplitudeSlider != null) {
+                    params.put("amplitude", amplitudeSlider.getValue());
+                    System.out.println("Amplitud: " + amplitudeSlider.getValue() + " V");
+                }
+            }
+
+            // Bit Rate para Digital→Analógico (convertir a duración del bit)
+            if (category.contains("Digital → Analógico")) {
+                if (bitRateSlider != null) {
+                    double bitRate = bitRateSlider.getValue();
+                    params.put("bitDuration", 1.0 / bitRate);
+                    System.out.println("Tasa de bits: " + bitRate + " bps (duración: " + (1.0/bitRate) + " s)");
+                }
+            }
+
+            // Sampling Rate para Analógico→Digital
+            if (category.contains("Analógico → Digital")) {
+                if (samplingRateSlider != null) {
+                    params.put("samplingRate", (int) samplingRateSlider.getValue());
+                    System.out.println("Frecuencia de muestreo: " + (int) samplingRateSlider.getValue() + " muestras");
+                }
+            }
+
+            // Bits per Sample para PCM
+            if (technique != null && technique.contains("PCM")) {
+                if (bitsPerSampleSlider != null) {
+                    params.put("bitsPerSample", (int) bitsPerSampleSlider.getValue());
+                    System.out.println("Bits por muestra: " + (int) bitsPerSampleSlider.getValue());
+                }
+            }
 
             // Si es técnica analógica y hay función, parsearla
             if (requiresAnalogInput(category) && !input.isEmpty()) {
@@ -609,6 +729,50 @@ public class MainController {
     }
 
     /**
+     * Inicializa el panel de parámetros técnicos con listeners para los sliders.
+     */
+    private void initializeParametersPanel() {
+        // Listener para frecuencia de portadora
+        if (carrierFrequencySlider != null && carrierFrequencyLabel != null) {
+            carrierFrequencySlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                carrierFrequencyLabel.setText(String.format("%.1f Hz", newVal.doubleValue()));
+            });
+        }
+
+        // Listener para amplitud
+        if (amplitudeSlider != null && amplitudeLabel != null) {
+            amplitudeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                amplitudeLabel.setText(String.format("%.1f V", newVal.doubleValue()));
+            });
+        }
+
+        // Listener para tasa de bits
+        if (bitRateSlider != null && bitRateLabel != null) {
+            bitRateSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                bitRateLabel.setText(String.format("%.1f bps", newVal.doubleValue()));
+            });
+        }
+
+        // Listener para frecuencia de muestreo
+        if (samplingRateSlider != null && samplingRateLabel != null) {
+            samplingRateSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                samplingRateLabel.setText(String.format("%d muestras", newVal.intValue()));
+            });
+        }
+
+        // Listener para bits por muestra (PCM)
+        if (bitsPerSampleSlider != null && bitsPerSampleLabel != null) {
+            bitsPerSampleSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+                int bits = newVal.intValue();
+                int levels = (int) Math.pow(2, bits);
+                bitsPerSampleLabel.setText(String.format("%d bits (%d niveles)", bits, levels));
+            });
+        }
+
+        System.out.println("Panel de parámetros técnicos inicializado");
+    }
+
+    /**
      * Verifica si un carácter es un operador matemático.
      */
     private boolean isOperator(char c) {
@@ -754,6 +918,23 @@ public class MainController {
             // Actualizar el icono de toggle
             if (harmonicsToggleIcon != null) {
                 harmonicsToggleIcon.setText(isVisible ? "▶" : "▼");
+            }
+        }
+    }
+
+    /**
+     * Alterna la visibilidad del contenido del panel de parámetros técnicos.
+     */
+    @FXML
+    private void toggleParametersContent() {
+        if (parametersContent != null) {
+            boolean isVisible = parametersContent.isVisible();
+            parametersContent.setVisible(!isVisible);
+            parametersContent.setManaged(!isVisible);
+
+            // Actualizar el icono de toggle
+            if (parametersToggleIcon != null) {
+                parametersToggleIcon.setText(isVisible ? "▶" : "▼");
             }
         }
     }
